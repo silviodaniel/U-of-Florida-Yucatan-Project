@@ -1,8 +1,8 @@
-setwd("C:/Users/Silvio/Documents/R/")
+setwd("C:/Users/Silvio/Documents/R/Yucatan-Project")
 library(cluster)
 library(dplyr)
-py<-read.table(file="../../Downloads/pop-yucatan/population-yucatan.txt",header=TRUE)
-ly<-read.table(file="../../Downloads/pop-yucatan/locations-yucatan.txt",header=TRUE)
+py<-read.table(file="C:/Users/Silvio/Downloads/pop-yucatan/population-yucatan.txt",header=TRUE)
+ly<-read.table(file="C:/Users/Silvio/Downloads/pop-yucatan/locations-yucatan.txt",header=TRUE)
 
 head(py)
 head(ly)
@@ -14,6 +14,8 @@ py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after wo
 py=left_join(py,ly[,c("workid","x","y")],by="workid")
 colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
 head(py)
+
+#Haversine 
 hav=function(x1,y1,x2,y2){
   #fixed error of converting to radians wrong
   return(12742 *asin(sqrt((sin(pi/180*(y2-y1)/2))^2
@@ -40,14 +42,18 @@ head(py)
 py$distance=apply_dists# adds the haversine function to the distance column in population
 people_mat = py[,c('pid','workid','distance')]##shortening the py matrix to 3 columns
 head(people_mat)
+people_mat2 = py[,c('pid','workid','logdist')]##shortening the py matrix to 3 columns
 
 tail(ly)
-loc_labels = ly[,c('id','type')]##shortening the matrix of locations to these 2 columns
+loc_labels = ly[,c('id','type')]##**shortening the matrix of locations to these 2 columns
 tail(loc_labels)
 names(loc_labels)[1] = 'workid' #names the column workid
-movement_by_type = merge(people_mat, loc_labels)#merging the shortened py and ly with "workid" , organized by number in dataset
+movement_by_type = merge(people_mat, loc_labels)#**merging the shortened py and ly with "workid" , organized by number in dataset
+movement_by_type2 = merge(people_mat2, loc_labels)
 head(movement_by_type)
+head(movement_by_type2)
 tail(movement_by_type)
+
 #??in merge, are we merging people_mt and loc_labels with "workid" and organizing the distances by their workid?
 hist(movement_by_type$distance[movement_by_type$type=='house'],xlab="Distance Traveled (km)", main="Average Daily Work Transit in Yucatan")
 table(movement_by_type$distance[movement_by_type$type=='house'])#gives number of people working from home (distance 0)
@@ -62,3 +68,36 @@ table(movement_by_type$distance[movement_by_type$type=='house'])
 table(movement_by_type$distance[movement_by_type$type=='work'])
 median(movement_by_type$distance[movement_by_type$type=='school'])
 median(movement_by_type$distance[movement_by_type$type=='work'])
+?hist
+hist(movement_by_type2$logdist[movement_by_type2$type=='work'],xlab="Distance Traveled (km)", main="Average Daily Work Transit in Yucatan")
+
+py$logdist=py$distance#adds new column called logdist set equal to distance 
+py$logdist[which(py$logdist==0)]=5/1000##Changing the zeroes in the data to 5/1000
+py$logdist=log10(py$logdist)#Taking log of the data for logdist
+
+
+set.seed(12345)
+x=rnorm(1000)
+hist.data=hist(x,plot=F)
+
+hist.data$counts=log10(hist.data$counts)
+dev.new(width=4, height=4)
+hist(x)
+dev.new(width=4, height=4)
+plot(hist.data, ylab='log10(Frequency)')
+hist(x)
+
+plot(density(movement_by_type2$logdist[movement_by_type2$type=='work'], log="y"), main="Histogram of Distance to Work")
+
+#Testing Log transform histogram
+count=table(round(rnorm(10000)*2))#data
+head(count)
+#plot
+plot(log(count),type="h",yaxt="n", xlab="log(count)", ylab="position")
+# axis labels
+yAxis = c(0,1,10,100,1000)
+# draw axis labels
+axis(2, at=log(yAxis),labels=yAxis, las=2)
+
+plot(movement_by_type2$logdist[movement_by_type2$type=='work']$count, log="y",type='h',lwd=10,lend=2)
+
