@@ -1,0 +1,31 @@
+setwd("C:/Users/Silvio/Documents/R/Yucatan-Project")
+library(cluster)
+library(dplyr)
+py<-read.table(file="C:/Users/Silvio/Documents/R/Yucatan-Project/pop-yucatan/population-yucatan.txt",header=TRUE)
+ly<-read.table(file="C:/Users/Silvio/Documents/R/Yucatan-Project/pop-yucatan/locations-yucatan.txt",header=TRUE)
+ly$Urban=x#Create urban/rural column
+colnames(ly)<-c(" id",  "type"," x","y" ,"x_ctr", "y_ctr" ,"Urban/Rural")
+ly$hid=ly$id
+ly$workid=ly$id
+py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
+py=left_join(py,ly[,c("workid","x","y")],by="workid")
+colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
+head(py)
+
+distinguish=function(long,lat){
+  if (long > merida_xmin & long<merida_xmax & lat>merida_ymin & lat<merida_ymax){
+    return("urban")
+  }
+  else{
+    return("rural")
+  }
+}
+distinguish(-90,20)#should be rural; works!
+distinguish(-89.35,21)#urban
+
+start=Sys.time()
+for (i in 1:475362){
+  ly[i,7]=distinguish(ly[i,3],ly[i,4])
+}
+print(Sys.time()-start)
+head(ly)
