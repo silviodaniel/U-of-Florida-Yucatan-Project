@@ -12,6 +12,27 @@ py=left_join(py,ly[,c("workid","x","y")],by="workid")
 colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
 head(py)
 
+
+#Distinguishing Urban and Rural Places
+merida_xmin=-89.4350 
+merida_ymin=20.5202 
+merida_xmax=-89.3124 
+merida_ymax=21.0401 ;merida_ymax
+
+#Searches through all home coordinates and finds which fall within the borders of Merida
+#ly[,3] refers to longitude column; other is latitude
+#Make sure to just do homes!!
+urban=which(ly[1:376400,3] > merida_xmin & ly[1:376400,3]<merida_xmax & ly[1:376400,4]>merida_ymin & ly[1:376400,4]<merida_ymax)
+length(urban)/length(ly[1:376400,3])#about 2.06% of homes are in Merida
+ly[,7]="rural"
+ly[urban,7]="urban"
+tail(ly[,7])
+
+head(urban)
+#position 1205 should be urban
+ly[1205,7]#works!
+
+#Using a function... the previous method works better since this requires a for loop
 distinguish=function(long,lat){
   if (long > merida_xmin & long<merida_xmax & lat>merida_ymin & lat<merida_ymax){
     return("urban")
@@ -22,10 +43,3 @@ distinguish=function(long,lat){
 }
 distinguish(-90,20)#should be rural; works!
 distinguish(-89.35,21)#urban
-
-start=Sys.time()
-for (i in 1:475362){
-  ly[i,7]=distinguish(ly[i,3],ly[i,4])
-}
-print(Sys.time()-start)
-head(ly)
