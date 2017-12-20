@@ -1,17 +1,16 @@
 setwd("C:/Users/Silvio/Documents/R/Yucatan-Project")
 library(cluster)
-install.packages("dplyr")
+# install.packages("dplyr")
 library(dplyr)
-py<-read.table(file="C:/Users/Silvio/Documents/R/Yucatan-Project/pop-yucatan/population-yucatan.txt",header=TRUE)
-ly<-read.table(file="C:/Users/Silvio/Documents/R/Yucatan-Project/pop-yucatan/locations-yucatan.txt",header=TRUE)
-#ly=d
-#df <- read.table("~/R/Yucatan-Project/pop-yucatan/population-yucatan.txt",header=TRUE)
-#tail(df)
-ly$Urban=x#Create urban/rural column
-colnames(ly)<-c(" id",  "type"," x","y" ,"x_ctr", "y_ctr" ,"Urban/Rural")
-
+#py<-read.table(file="C:/Users/Silvio/Documents/R/Yucatan-Project/pop-yucatan/population-yucatan.txt",header=TRUE)
+# py=read.table(file="pop-yucatan/population-yucatan_old.txt",header = T)
+py=read.table(file="pop-yucatan/population-yucatan.txt",header = T)
+ly<-read.table(file="pop-yucatan/locations-yucatan.txt",header=TRUE)
 # x=seq(1:475362)
-# tail(ly)
+# ly$Urban=x#Create urban/rural column
+# colnames(ly)<-c(" id",  "type"," x","y" ,"x_ctr", "y_ctr" ,"Urban/Rural")
+
+tail(ly)
 
 ly$hid=ly$id
 ly$workid=ly$id
@@ -23,24 +22,22 @@ colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1",
 head(py)
 
 #Haversine 
+pi=3.141593
 hav=function(x1,y1,x2,y2){
-  #fixed error of converting to radians wrong
+  #convert degrees to radians by multiplying by pi, dividing by 180
+  #y's should be latitudes and x's should be longitudes
   return(12742 *asin(sqrt((sin(pi/180*(y2-y1)/2))^2
                           +cos(pi/180*y1)*cos(pi/180*y2)*(sin(pi/180*(x2-x1)/2))^2)))
 }
 
 hav(-89.6848792716 ,20.6464119922,-89.0323486633, 20.8012998636)#=70.01462
-hav(-89.12265, 21.23725, -89.55344, 20.92981)
-hav(py[1:10,8:11],3,4,5)
+# hav(-89.12265, 21.23725, -89.55344, 20.92981)
+# hav(py[1:10,8:11],3,4,5)
 py[1:10,8:11]
 
 #Creating distance column with haversine
 start = Sys.time()
 hav_vec=hav(py[,8],py[,9],py[,10],py[,11])##ANOTHER FAST WAY TO CALCULATE
-#head(hav_vec)
-#length(hav_vec)
-#length(py)
-#tail(py)
 py$distance=hav_vec
 print(Sys.time()-start)
 #head(py)
@@ -55,10 +52,11 @@ people_mat = py[,c('pid','workid','distance')]##shortening the py matrix to 3 co
 # head(people_mat)
 # people_log = py[,c('pid','workid','logdist')]##shortening the py matrix to 3 columns
 # tail(people_log)
+head(py)
+head(ly)
 
 tail(ly)
 loc_labels = ly[,c('id','type')]##**shortening the matrix of locations to these 2 columns
-head(loc_labels)
 names(loc_labels)[1] = 'workid' #names the column workid
 movement_by_type = merge(people_mat, loc_labels)#**merging the shortened py and ly with "workid" , organized by number in dataset
 #movement by type has houses, schools, work, organized by work id and pid; histogram the distances separete as types (school or work)
@@ -66,23 +64,33 @@ movement_by_type = merge(people_mat, loc_labels)#**merging the shortened py and 
 # head(movement_by_type)
 # head(movement_by_log)
 # tail(movement_by_type)
-View(movement_by_type)
+#View(movement_by_type)
 
 #??in merge, are we merging people_mt and loc_labels with "workid" and organizing the distances by their workid?
 table(movement_by_type$distance[movement_by_type$type=='house'])#gives number of people working from home (distance 0)
 #which is 620859
+
+#WORK HISTOGRAM 
 hist(movement_by_type$distance[movement_by_type$type=='work'],xlab="Distance Traveled (km)", main="Average Daily Work Transit in Yucatan")
-#WORK HISTOGRAM (above)
-hist(movement_by_type$distance[movement_by_type$type=='school'],xlab="Distance Traveled (km)", main="Average Daily School Transit in Yucatan")
+
 #SCHOOL HISTOGRAM
+hist(movement_by_type$distance[movement_by_type$type=='school'],xlab="Distance Traveled (km)", main="Average Daily School Transit in Yucatan")
+
 mean(movement_by_type$distance[movement_by_type$type=='house'])
-mean(movement_by_type$distance[movement_by_type$type=='school'])#7.58
+mean(movement_by_type$distance[movement_by_type$type=='school'])#7.58, with pi=0.5
+#reproduced old mean of 45.7km
+#7.88 km new data, normal pi value
 mean(movement_by_type$distance[movement_by_type$type=='work'])#5.74
-table(movement_by_type$distance[movement_by_type$type=='house'])
-table(movement_by_type$distance[movement_by_type$type=='work'])
+#reproduced old mean of 34.4 km
+#13.9 km new data
+# table(movement_by_type$distance[movement_by_type$type=='house'])
+# table(movement_by_type$distance[movement_by_type$type=='work'])
 median(movement_by_type$distance[movement_by_type$type=='school'])#7.65
+#reproduced old median of 46.0km
+#.705km new data
 median(movement_by_type$distance[movement_by_type$type=='work'])#1.83
-?hist
+#Reproduced old median of 11.06km
+#2.78 km new data
 hist(movement_by_log$logdist[movement_by_log$type=='school'],
      xlab="Distance Traveled (log(km))", 
      main="Average Daily School Transit in Yucatan")
