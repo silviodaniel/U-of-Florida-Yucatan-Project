@@ -19,6 +19,7 @@ dev.off()
 head(movement_by_type)
 ###############################################################################
 #HEATMAP CODE BELOW
+library(ggplot2)
 
 #Creating data for heatmap, only including those going to school, 
 #with the long and lat coordinates for axes
@@ -29,7 +30,7 @@ new_movement_by_type=merge(people_mat,new_loc_labels)
 heatmap_data=subset(new_movement_by_type,type=="school")#subsetting just the schools, instead
 # of all places  to make the school heat map
 length(heatmap_data$workid)#540818 going to school
-head(heatmap_data)
+# head(heatmap_data)
 
 #GGPLOT2 HEATMAP of distance traveled by household
 ggplot(heatmap_data,aes(x,y))+geom_point(aes(colour=distance))+
@@ -37,6 +38,18 @@ ggplot(heatmap_data,aes(x,y))+geom_point(aes(colour=distance))+
 #ALSO TRY MAKING THE POINTS SMALLER
 ggplot(heatmap_data,aes(x,y))+geom_point(aes(colour=distance),size=2)+
   scale_color_gradientn(colours=rainbow(15))
+
+#####################################################################
+#Second heat map
+install.packages("cartography")
+library(cartography)
+library(sf)
+install.packages("sf")
+
+plot(nuts0.spdf, border = NA, col = NA, bg = "#A6CAE0")
+plot(world.spdf, col  = "#E3DEBF", border=NA, add=TRUE)
+
+
 
 #######################################################################################
 #Findings
