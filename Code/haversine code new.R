@@ -1,4 +1,5 @@
 setwd("C:/Users/Silvio/Documents/R/Yucatan-Project")
+# install.packages("cluster")
 library(cluster)
 # install.packages("dplyr")
 library(dplyr)
@@ -6,20 +7,15 @@ library(dplyr)
 # py=read.table(file="pop-yucatan/population-yucatan_old.txt",header = T)
 py=read.table(file="pop-yucatan/population-yucatan.txt",header = T)
 ly<-read.table(file="pop-yucatan/locations-yucatan.txt",header=TRUE)
-# x=seq(1:475362)
-# ly$Urban=x#Create urban/rural column
-# colnames(ly)<-c(" id",  "type"," x","y" ,"x_ctr", "y_ctr" ,"Urban/Rural")
-
-tail(ly)
-
 ly$hid=ly$id
 ly$workid=ly$id
-tail(ly)
-
 py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
 py=left_join(py,ly[,c("workid","x","y")],by="workid")
 colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
 head(py)
+
+# ly$Urban=x#Create urban/rural column
+# colnames(ly)<-c(" id",  "type"," x","y" ,"x_ctr", "y_ctr" ,"Urban/Rural")
 
 #Haversine 
 pi=3.141593
@@ -52,10 +48,10 @@ people_mat = py[,c('pid','workid','distance')]##shortening the py matrix to 3 co
 # head(people_mat)
 # people_log = py[,c('pid','workid','logdist')]##shortening the py matrix to 3 columns
 # tail(people_log)
-head(py)
-head(ly)
+# head(py)
+# head(ly)
 
-tail(ly)
+# tail(ly)
 loc_labels = ly[,c('id','type')]##**shortening the matrix of locations to these 2 columns
 names(loc_labels)[1] = 'workid' #names the column workid
 movement_by_type = merge(people_mat, loc_labels)#**merging the shortened py and ly with "workid" , organized by number in dataset
