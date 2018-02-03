@@ -72,19 +72,21 @@ hist(movement_by_type$distance[movement_by_type$type=='work'],xlab="Distance Tra
 #SCHOOL HISTOGRAM
 hist(movement_by_type$distance[movement_by_type$type=='school'],xlab="Distance Traveled (km)", main="Average Daily School Transit in Yucatan")
 
+#Means
 mean(movement_by_type$distance[movement_by_type$type=='house'])
-mean(movement_by_type$distance[movement_by_type$type=='school'])#7.58, with pi=0.5
+mean(movement_by_type$distance[movement_by_type$type=='school'])#
 #reproduced old mean of 45.7km
 #7.88 km new data, normal pi value
-mean(movement_by_type$distance[movement_by_type$type=='work'])#5.74
+
+mean(movement_by_type$distance[movement_by_type$type=='work'])#
 #reproduced old mean of 34.4 km
 #13.9 km new data
 # table(movement_by_type$distance[movement_by_type$type=='house'])
 # table(movement_by_type$distance[movement_by_type$type=='work'])
-median(movement_by_type$distance[movement_by_type$type=='school'])#7.65
+median(movement_by_type$distance[movement_by_type$type=='school'])#
 #reproduced old median of 46.0km
 #.705km new data
-median(movement_by_type$distance[movement_by_type$type=='work'])#1.83
+median(movement_by_type$distance[movement_by_type$type=='work'])#
 #Reproduced old median of 11.06km
 #2.78 km new data
 hist(movement_by_log$logdist[movement_by_log$type=='school'],
@@ -141,3 +143,4 @@ max(movement_by_type$distance)#max distance travelled is 37.7 km
 #NOtes#################################################################
 #where houses end in location : position 376400
 
+length(students)

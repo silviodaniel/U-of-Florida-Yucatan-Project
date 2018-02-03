@@ -57,6 +57,9 @@ points(schools$x,schools$y,pch='.',col='blue')
 students=py[py$age>4 & py$age<18,]
 points(students$x1,students$y1,pch='.',col='red')
 
-# 
+head(students)
+length(students$pid)
+
+ 
 # head(students)
 # head(schools)
