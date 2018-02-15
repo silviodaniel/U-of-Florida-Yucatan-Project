@@ -60,6 +60,24 @@ points(students$x1,students$y1,pch='.',col='red')
 head(students)
 length(students$pid)
 
+plotCircle <- function(x, y, r) {
+  angles <- seq(0,2*pi,length.out=360)#between 0 and 2pi
+  lines(r*cos(angles)+x,r*sin(angles)+y)#start at x and y and add
+}#This output is Cartesian not lat long, so have to fix this
+#must get lines to output the coordinates of x and y in lat/long degrees
+
+##
+#Example
+plot(1:100,type='n')
+lines(c(0,0,20,0),c(0,20,20,0))#Plot triangle
+##
+
+plotCircle(-89,20,0.5)
  
 # head(students)
 # head(schools)
+
+
+
+
+  

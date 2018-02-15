@@ -18,13 +18,27 @@ head(py)
 # colnames(ly)<-c(" id",  "type"," x","y" ,"x_ctr", "y_ctr" ,"Urban/Rural")
 
 #Haversine 
-pi=3.141593
+#pi=3.141593
+rm(pi)
 hav=function(x1,y1,x2,y2){
   #convert degrees to radians by multiplying by pi, dividing by 180
   #y's should be latitudes and x's should be longitudes
   return(12742 *asin(sqrt((sin(pi/180*(y2-y1)/2))^2
                           +cos(pi/180*y1)*cos(pi/180*y2)*(sin(pi/180*(x2-x1)/2))^2)))
 }
+12742/2
+
+hav(-90,20,-89,20)
+hav(-90,20,-90,21)
+
+hav(-90,0,-90,1)
+hav(-90,0,-89,0)
+
+hav(-90,89,-90,90)#latitude changing
+hav(-90,90,-89,90)#long
+
+hav(0,20,)
+
 
 hav(-89.6848792716 ,20.6464119922,-89.0323486633, 20.8012998636)#=70.01462
 # hav(-89.12265, 21.23725, -89.55344, 20.92981)
