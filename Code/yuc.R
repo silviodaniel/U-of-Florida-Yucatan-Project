@@ -1,13 +1,19 @@
+rm(list=ls())
 library(cartography)
-setwd("C:/Users/Silvio/Documents/R/Yucatan-Project")
+
+#rootdir = "C:/Users/Silvio/Documents/"
+#mapdir  = paste0(rootdir, "ArcGIS Explorer/My Basemaps/MEX_adm/")
+rootdir = "./"
+mapdir  = paste0(rootdir, "../")
+#setwd(paste(rootdir,"R/Yucatan-Project"))
 # install.packages("cluster")
-library(cluster)
+#library(cluster)
 # install.packages("dplyr")
-library(dplyr)
+#library(dplyr)
 
 #reading files necessary
-py=read.table(file="pop-yucatan/population-yucatan.txt",header = T)
-ly<-read.table(file="pop-yucatan/locations-yucatan.txt",header=TRUE)
+py=read.table(file="../population-yucatan.txt",header = T)
+ly<-read.table(file="../locations-yucatan.txt",header=TRUE)
 ly$hid=ly$id
 ly$workid=ly$id
 py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
@@ -19,10 +25,8 @@ head(py)
 #                , quiet = TRUE)#encuesta intercensal
 # rural<- st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/yuc_ageb_rural.shp"
 #                 , quiet = TRUE)#Encuesta intercensal
-mex0=st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/MEX_adm/MEX_adm0.shp",
-             quiet=T)#Diva-GIS
-mex1=st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/MEX_adm/MEX_adm1.shp",
-             quiet=T)#Diva-GIS
+mex0=st_read(paste0(rootdir, mapdir, "MEX_adm0.shp"), quiet=T)#Diva-GIS
+mex1=st_read(paste0(rootdir, mapdir, "MEX_adm1.shp"), quiet=T)#Diva-GIS
 
 # class(urbana)
 # plot(st_geometry(urbana))#from encuesta file
@@ -60,9 +64,34 @@ points(students$x1,students$y1,pch='.',col='red')
 head(students)
 length(students$pid)
 
-plotCircle <- function(x, y, r) {
-  angles <- seq(0,2*pi,length.out=360)#between 0 and 2pi
-  lines(r*cos(angles)+x,r*sin(angles)+y)#start at x and y and add
+earth_r = 6371
+rm(pi)
+gcd=function(x1,y1,x2,y2){
+  #convert degrees to radians by multiplying by pi, dividing by 180
+  #y's should be latitudes and x's should be longitudes
+  return(2 * earth_r *asin(sqrt((sin(pi*(y2-y1)/(2*180)))^2
+                          +cos(pi*y1/180)*cos(pi*y2/180)*(sin(pi*(x2-x1)/(2*180)))^2)))
+}
+
+km_to_lat_rad = function(km) { return(km/earth_r) }
+hav = function(theta) { return((1 - cos(theta))/2); }
+deg2rad <- function(deg) return(deg*pi/180)
+rad2deg <- function(rad) return(rad*180/pi)
+
+plotCircle <- function(x_deg, y_deg, r) {
+  x = deg2rad(x_deg)
+  y = deg2rad(y_deg)
+  halflats = y + km_to_lat_rad(r)*sin(pi*90:270/180)
+  eastlons = x + 2*asin(sqrt((hav(r/earth_r) - hav(halflats - y))/(cos(y)*cos(halflats))))
+  westlons = x - 2*asin(sqrt((hav(r/earth_r) - hav(halflats - y))/(cos(y)*cos(halflats))))
+  
+  lats = c(halflats, rev(halflats))
+  lons = c(westlons, rev(eastlons))
+  lines(rad2deg(lons), rad2deg(lats))
+  #browser()
+
+  #angles <- seq(0,2*pi,length.out=360)#between 0 and 2pi
+  #lines(r*cos(angles)+x,r*sin(angles)+y)#start at x and y and add
 }#This output is Cartesian not lat long, so have to fix this
 #must get lines to output the coordinates of x and y in lat/long degrees
 
