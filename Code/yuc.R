@@ -1,4 +1,5 @@
-<<<<<<< HEAD
+#<<<<<<< HEAD
+rm(list=ls())
 library(cartography)
 rootdir="C:/Users/Silvio/Documents/"
 mapdir="ArcGIS Explorer/My Basemaps/MEX_adm/"
@@ -46,9 +47,9 @@ plot(st_geometry(mex1[31,]),add=T,col="#99FF99")#adds green color to
 
 axis(1)#adds in long and lat axes
 axis(2)
-# grid()
-# abline(h=seq(19,22,0.1))
-# abline(v=seq(-91,-87,0.1))
+grid()
+abline(h=seq(19,22,0.1))
+abline(v=seq(-91,-87,0.1))
 
 #Next steps: create heat map of distance children traveling to school by locality
 #pair localiites with distance, color them darker gradient depending on value
@@ -64,12 +65,42 @@ points(schools$x,schools$y,pch='.',col='blue')
 head(students)
 length(students$pid)
 
-plotCircle <- function(x, y, r) {
-  angles <- seq(0,2*pi,length.out=360)#between 0 and 2pi
-  lines(r*cos(angles)+x,r*sin(angles)+y)#start at x and y and add
+#Haversine function
+earth_r = 6371
+rm(pi)
+gcd=function(x1,y1,x2,y2){
+  #convert degrees to radians by multiplying by pi, dividing by 180
+  #y's should be latitudes and x's should be longitudes
+  return(2 * earth_r *asin(sqrt((sin(pi*(y2-y1)/(2*180)))^2
+                                +cos(pi*y1/180)*cos(pi*y2/180)*(sin(pi*(x2-x1)/(2*180)))^2)))
+}
+
+km_to_lat_rad = function(km) { return(km/earth_r) }
+hav = function(theta) { return((1 - cos(theta))/2); }
+deg2rad <- function(deg) return(deg*pi/180)
+rad2deg <- function(rad) return(rad*180/pi)
+plotCircle <- function(x_deg, y_deg, r) {#Radius is in kilometers!
+  x = deg2rad(x_deg)
+  y = deg2rad(y_deg)
+  halflats = y + km_to_lat_rad(r)*sin(pi*90:270/180)
+  eastlons = x + 2*asin(sqrt((hav(r/earth_r) - hav(halflats - y))/(cos(y)*cos(halflats))))
+  westlons = x - 2*asin(sqrt((hav(r/earth_r) - hav(halflats - y))/(cos(y)*cos(halflats))))
+  
+  lats = c(halflats, rev(halflats))
+  lons = c(westlons, rev(eastlons))
+  lines(rad2deg(lons), rad2deg(lats))
+  #browser()
+  #angles <- seq(0,2*pi,length.out=360)#between 0 and 2pi
+  #lines(r*cos(angles)+x,r*sin(angles)+y)#start at x and y and add
 }#This output is Cartesian not lat long, so have to fix this
 #must get lines to output the coordinates of x and y in lat/long degrees
-plotCircle(-89,20,0.5)
+
+plotCircle(-89.6,21,15)
+head(schools)
+
+for i in 
+
+
 
 pi*1:2
 ##
@@ -86,7 +117,7 @@ lines(c(0,0,20,0),c(0,20,20,0))#Plot triangle
 
 
   
-=======
+#=======
 rm(list=ls())
 library(cartography)
 
@@ -144,15 +175,17 @@ abline(v=seq(-91,-87,0.1))
 #pair localiites with distance, color them darker gradient depending on value
 
 #Just add below code to above plot of Yuc (empty green area, mex0 and mex1)
+
+students=py[py$age>4 & py$age<18,]
+points(students$x1,students$y1,pch='.',col='red')
+#
 schools = ly[ly$type=='school',]
 points(schools$x,schools$y,pch='.',col='blue')
 #
-students=py[py$age>4 & py$age<18,]
-points(students$x1,students$y1,pch='.',col='red')
-
 head(students)
 length(students$pid)
 
+#Haversine function manipulation to plot circles correctly
 earth_r = 6371
 rm(pi)
 gcd=function(x1,y1,x2,y2){
@@ -167,6 +200,7 @@ hav = function(theta) { return((1 - cos(theta))/2); }
 deg2rad <- function(deg) return(deg*pi/180)
 rad2deg <- function(rad) return(rad*180/pi)
 
+#Function to plot circle using haversine, will look elliptical but that's bc of curvature
 plotCircle <- function(x_deg, y_deg, r) {
   x = deg2rad(x_deg)
   y = deg2rad(y_deg)
@@ -179,10 +213,30 @@ plotCircle <- function(x_deg, y_deg, r) {
   lines(rad2deg(lons), rad2deg(lats))
   #browser()
 
+plotCircle_blue <- function(x_deg, y_deg, r) {
+    x = deg2rad(x_deg)
+    y = deg2rad(y_deg)
+    halflats = y + km_to_lat_rad(r)*sin(pi*90:270/180)
+    eastlons = x + 2*asin(sqrt((hav(r/earth_r) - hav(halflats - y))/(cos(y)*cos(halflats))))
+    westlons = x - 2*asin(sqrt((hav(r/earth_r) - hav(halflats - y))/(cos(y)*cos(halflats))))
+    lats = c(halflats, rev(halflats))
+    lons = c(westlons, rev(eastlons))
+    lines(rad2deg(lons), rad2deg(lats),col="blue")
+  
+  
   #angles <- seq(0,2*pi,length.out=360)#between 0 and 2pi
   #lines(r*cos(angles)+x,r*sin(angles)+y)#start at x and y and add
 }#This output is Cartesian not lat long, so have to fix this
 #must get lines to output the coordinates of x and y in lat/long degrees
+
+##Plotting circles around all schools!
+length(schools$x)
+for (coordinate in 1:length(schools$x)){
+  plotCircle(schools$x[coordinate],schools$y[coordinate],15)#15 km radius of circle
+}
+
+lines(c(-90,-89.8),c(19.5,19.7),col="blue")
+###
 
 ##
 #Example
@@ -190,7 +244,7 @@ plot(1:100,type='n')
 lines(c(0,0,20,0),c(0,20,20,0))#Plot triangle
 ##
 
-plotCircle(-89,20,0.5)
+plotCircle_blue(-90.25,19.75,15)
  
 # head(students)
 # head(schools)
