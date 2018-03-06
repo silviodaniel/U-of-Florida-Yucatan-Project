@@ -1,4 +1,3 @@
-#<<<<<<< HEAD
 rm(list=ls())
 library(cartography)
 rootdir="C:/Users/Silvio/Documents/"
@@ -167,6 +166,10 @@ mex1=st_read(paste0(rootdir, mapdir, "MEX_adm1.shp"), quiet=T)#Diva-GIS
 
 ##
 #Map of Yucatan
+
+png("catchment_map.png", width=2400, height=1600, res=240)
+#pdf("catchment_map.pdf", width=12, height=8)
+
 par(mar=c(2.1,2.1,2.1,2.1))#margins
 plot(st_geometry(mex0))#plots all of Mexico
 plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
@@ -258,37 +261,33 @@ plot(1:100,type='n')
 lines(c(0,0,20,0),c(0,20,20,0))#Plot triangle
 ##
 
-plotCircle_blue(-87.685,21.515,15)
 #These 20 coordinates place schools roughly (eyeballing) to cover those children not currently
 #within 15km of a school
-#-87.975,20.875
-#-87.7,20.85
-#-87.6,21.05
-#-88.04,21.4
-#-87.78,21.33
-#-87.87,21.14
-#-88.53,21.32
-#-90.225,20.63
-#-88.68,20.23
-#-89.445,20
-#-89.7,20.22
-#-88.7,20.72
-#-88.49,21.21 
-#-89.345,19.865
-#-88.67,20.44
-#-89.975,21.17
-#-88.285,20.35
-#-88.03,20.465
-#-87.66,21.22
-#-87.685,21.515
+plotCircle_blue(-87.975,	20.875,	15)
+plotCircle_blue(-87.7,      20.85,	15)
+plotCircle_blue(-87.6,      21.05,	15)
+plotCircle_blue(-88.04,     21.4,	15)
+plotCircle_blue(-87.78,     21.33,	15)
+plotCircle_blue(-87.87,     21.14,	15)
+plotCircle_blue(-88.53,     21.32,	15)
+plotCircle_blue(-90.225,	20.63,	15)
+plotCircle_blue(-88.68,	    20.23,	15)
+plotCircle_blue(-89.445,	20,	    15)
+plotCircle_blue(-89.7,      20.22,	15)
+plotCircle_blue(-88.7,      20.72,	15)
+plotCircle_blue(-88.49,     21.21 ,	15)
+plotCircle_blue(-89.345,	19.865,	15)
+plotCircle_blue(-88.67,	    20.44,	15)
+plotCircle_blue(-89.975,	21.17,	15)
+plotCircle_blue(-88.285,	20.35,	15)
+plotCircle_blue(-88.03,     20.465,	15)
+plotCircle_blue(-87.66,     21.22,	15)
+plotCircle_blue(-87.685,	21.515,	15)
 
-dev.copy2pdf()
+dev.off()
+#dev.copy2pdf()
 
 # head(students)
 # head(schools)
 
-pdf()
-
-
-  
->>>>>>> ac86985ceebb8f0aa6c51aee940d24c5a7fe88d5
+#pdf()
