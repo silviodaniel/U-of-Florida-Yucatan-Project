@@ -1,4 +1,4 @@
-setwd("C:/Users/Silvio/Documents/R/Yucatan-Project")
+setwd("C:/Users/Silvio/Documents/R/Yucatan-Project/Pictures")
 # install.packages("cluster")
 library(cluster)
 # install.packages("dplyr")
