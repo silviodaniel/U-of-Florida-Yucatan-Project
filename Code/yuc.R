@@ -3,6 +3,7 @@ rm(list=ls())
 library(cartography)
 rootdir="C:/Users/Silvio/Documents/"
 mapdir="ArcGIS Explorer/My Basemaps/MEX_adm/"
+mapdir2="ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/"
 setwd(paste0(rootdir,"GitHub/U-of-Florida-Yucatan-Project"))
 # install.packages("cluster")
 library(cluster)
@@ -19,10 +20,12 @@ py=left_join(py,ly[,c("workid","x","y")],by="workid")
 colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
 head(py)
 ##
-# urbana <- st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/yuc_ageb_urbana.shp"
-#                , quiet = TRUE)#encuesta intercensal
-# rural<- st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/yuc_ageb_rural.shp"
-#                 , quiet = TRUE)#Encuesta intercensal
+urbana<- st_read(paste0(rootdir,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
+rural<-st_read(paste0(rootdir,mapdir2,"yuc_ageb_rural.shp"),quiet=T)#Encuesta intercensal
+encuesta<-read.csv(paste0(rootdir,mapdir2,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
+                   header=T)
+# View(encuesta)
+
 mex0=st_read(paste0(rootdir,mapdir,"MEX_adm0.shp"),
              quiet=T)#Diva-GIS
 mex1=st_read(paste0(rootdir,mapdir,"MEX_adm1.shp"),
@@ -31,8 +34,19 @@ mex1=st_read(paste0(rootdir,mapdir,"MEX_adm1.shp"),
 # class(urbana)
 # plot(st_geometry(urbana))#from encuesta file
 
+rural$CVE_AGEB
 ##
-#Map of Yucatan
+#Map 1
+par(mar=c(2.1,2.1,2.1,2.1))#margins
+plot(st_geometry(mex0))#plots all of Mexico
+plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
+     col="gray")#takes all Mexico plot, plot just Yucatan
+plot(st_geometry(urbana),add=T,col="brown")
+plot(st_geometry(rural),add=T,col="#99FF99")
+
+# plot(st_as_sf(urbana)["CVE_LOC"])
+#plot(st_as_sf(rural)[""])
+#Map 2
 par(mar=c(2.1,2.1,2.1,2.1))#margins
 plot(st_geometry(mex0))#plots all of Mexico
 plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",

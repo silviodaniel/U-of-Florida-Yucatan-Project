@@ -112,6 +112,8 @@ dflab <- nuts0.df[order(nuts0.df$pop2008, decreasing = TRUE),][1:10,]
 # Label creation
 dflab$lab <- paste(dflab$id, "\n", round(dflab$pop2008/1000000,0), "M", sep ="")
 
+# ?labelLayer()
+# class(nuts0.spdf)
 # Label plot of the 10 most populated countries
 labelLayer(spdf = nuts0.spdf, # SpatialPolygonsDataFrame used to plot he labels
            df = dflab, # data frame containing the lables
@@ -124,4 +126,32 @@ labelLayer(spdf = nuts0.spdf, # SpatialPolygonsDataFrame used to plot he labels
 text(x = 5477360, y = 4177311, labels = "The 10 most populated countries of Europe
      Total population 2008, in millions of inhabitants.", cex = 0.7, adj = 0)
 
+################################################################
+#Other example
+## Plot OpenStreetMap tiles as basemap 
+# Download the tiles, nuts0.spdf extent
+EUosm <- getTiles(spdf = nuts0.spdf, type = "osm", zoom = 4)
+## Warning: spdf is deprecated; use x instead.
+# Plot the tiles
+tilesLayer(EUosm)
+
+# Plot countries
+plot(nuts0.spdf, border = "grey65", lwd = 2, add=TRUE)
+
+# Plot countries population 
+nuts0.df$pop <- nuts0.df$pop2008 / 1000
+propSymbolsLayer(spdf = nuts0.spdf, # SpatialPolygonsDataFrame of the countries
+                 df = nuts0.df,  # data frame of the regions
+                 var = "pop",  # population
+                 symbols = "circle", # type of symbol
+                 border = "white", # color of the symbols borders
+                 lwd = 1.5, # width of the symbols borders
+                 legend.pos = "topleft",
+                 legend.title.txt = "Total population\n(in thousands)")
+# # Layout plot
+layoutLayer(title = "Countries Population in Europe",
+            sources = "Data: Eurostat, 2008",
+            author = "Base map: Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under CC BY SA.",
+            scale = NULL, frame = TRUE,
+            col = "#688994") # color of the frame
 
