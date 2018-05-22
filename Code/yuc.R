@@ -24,6 +24,9 @@ rural<-st_read(paste0(rootdir,mapdir2,"yuc_ageb_rural.shp"),quiet=T)#Encuesta in
 encuesta<-read.csv(paste0(rootdir,mapdir2,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
                    header=T)
 # View(encuesta)
+# View(urbana)
+# head(urbana)
+# tail(urbana)
 
 mex0=st_read(paste0(rootdir,mapdir,"MEX_adm0.shp"),
              quiet=T)#Diva-GIS
@@ -108,19 +111,14 @@ plotCircle <- function(x_deg, y_deg, r) {#Radius is in kilometers!
 }#This output is Cartesian not lat long, so have to fix this
 #must get lines to output the coordinates of x and y in lat/long degrees
 
-plotCircle(-89.6,21,15)
-head(schools)
+# plotCircle(-89.6,21,15)
+# head(schools)
 
-for i in 
-
-
-
-pi*1:2
 ##
 #Example
-plot(1:100,type='n')
-lines(c(0,0,20,0),c(0,20,20,0))#Plot triangle
-##
+# plot(1:100,type='n')
+# lines(c(0,0,20,0),c(0,20,20,0))#Plot triangle
+# ##
 
  
 # head(students)
@@ -201,6 +199,7 @@ points(schools$x,schools$y,pch='.',col='blue')
 #
 head(students)
 length(students$pid)
+length(schools$pid)
 
 #Haversine function manipulation to plot circles correctly
 earth_r = 6371
@@ -228,7 +227,7 @@ plotCircle <- function(x_deg, y_deg, r) {
   lats = c(halflats, rev(halflats))
   lons = c(westlons, rev(eastlons))
   lines(rad2deg(lons), rad2deg(lats))
-  #browser()
+  }#browser()
 
 plotCircle_blue <- function(x_deg, y_deg, r) {
     x = deg2rad(x_deg)
@@ -252,14 +251,14 @@ for (coordinate in 1:length(schools$x)){
   plotCircle(schools$x[coordinate],schools$y[coordinate],15)#15 km radius of circle
 }
 
-lines(c(-90,-89.8),c(19.5,19.7),col="blue")
+# lines(c(-90,-89.8),c(19.5,19.7),col="blue")
 ###
 
 ##
 #Example
-plot(1:100,type='n')
-lines(c(0,0,20,0),c(0,20,20,0))#Plot triangle
-##
+# plot(1:100,type='n')
+# lines(c(0,0,20,0),c(0,20,20,0))#Plot triangle
+# ##
 
 #These 20 coordinates place schools roughly (eyeballing) to cover those children not currently
 #within 15km of a school
