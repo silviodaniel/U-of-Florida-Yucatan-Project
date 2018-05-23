@@ -51,7 +51,8 @@ head(locations)
 #need to organize all those that don't have results from API to randomly place coordinates
 #need to find how to randomly place
 
-
+address.mod1=read.table("https://raw.githubusercontent.com/silviodaniel/U-of-Florida-Yucatan-Project/master/Linux%20Data/addresses2_mod.csv",
+                        header=T);head(address.mod1)
 
 
 
