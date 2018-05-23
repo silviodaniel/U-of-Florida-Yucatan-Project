@@ -1,0 +1,186 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "Kilómetro 1",
+               "short_name" : "Kilómetro 1",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "Carretera Izamal Hoctun",
+               "short_name" : "Carretera Izamal Hoctun",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Izamal",
+               "short_name" : "Izamal",
+               "types" : [ "political", "sublocality", "sublocality_level_1" ]
+            },
+            {
+               "long_name" : "Izamal",
+               "short_name" : "Izamal",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Yucatán",
+               "short_name" : "Yuc.",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Mexico",
+               "short_name" : "MX",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "97540",
+               "short_name" : "97540",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "Carretera Izamal Hoctun Kilómetro 1, Izamal, 97540 Izamal, Yuc., Mexico",
+         "geometry" : {
+            "location" : {
+               "lat" : 20.941224,
+               "lng" : -89.0190348
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 20.9425729802915,
+                  "lng" : -89.0176858197085
+               },
+               "southwest" : {
+                  "lat" : 20.9398750197085,
+                  "lng" : -89.02038378029151
+               }
+            }
+         },
+         "place_id" : "ChIJFU7u532jVo8R5QZhcACY5rI",
+         "types" : [ "establishment", "point_of_interest", "school" ]
+      }
+   ],
+   "status" : "OK"
+}
+GMAPS: 20.941224,-89.0212235
+
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "243",
+               "short_name" : "243",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "Calle 24",
+               "short_name" : "Calle 24",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "San Marcos",
+               "short_name" : "San Marcos",
+               "types" : [ "political", "sublocality", "sublocality_level_1" ]
+            },
+            {
+               "long_name" : "Izamal",
+               "short_name" : "Izamal",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Yucatán",
+               "short_name" : "Yuc.",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Mexico",
+               "short_name" : "MX",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "97540",
+               "short_name" : "97540",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "Calle 24 243, San Marcos, 97540 Izamal, Yuc., Mexico",
+         "geometry" : {
+            "location" : {
+               "lat" : 20.9257331,
+               "lng" : -89.0147516
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 20.9270820802915,
+                  "lng" : -89.01340261970849
+               },
+               "southwest" : {
+                  "lat" : 20.9243841197085,
+                  "lng" : -89.01610058029149
+               }
+            }
+         },
+         "place_id" : "ChIJv3wgomKjVo8RdMjKXkvm5AA",
+         "types" : [ "establishment", "point_of_interest", "school" ]
+      }
+   ],
+   "status" : "OK"
+}
+GMAPS: 20.9257331,-89.0169403
+
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "Citilcum",
+               "short_name" : "Citilcum",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Yucatán",
+               "short_name" : "Yuc.",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Mexico",
+               "short_name" : "MX",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Unnamed Road, Citilcum, Yuc., Mexico",
+         "geometry" : {
+            "location" : {
+               "lat" : 20.9485984,
+               "lng" : -89.11923829999999
+            },
+            "location_type" : "GEOMETRIC_CENTER",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 20.9499473802915,
+                  "lng" : -89.1178893197085
+               },
+               "southwest" : {
+                  "lat" : 20.94724941970849,
+                  "lng" : -89.1205872802915
+               }
+            }
+         },
+         "place_id" : "ChIJjfkAH_aYVo8RcXhyJD9RUEs",
+         "types" : [ "establishment", "point_of_interest", "school" ]
+      }
+   ],
+   "status" : "OK"
+}
+GMAPS: 20.9485984,-89.121427,
+
+{
+   "results" : [],
+   "status" : "ZERO_RESULTS"
+}
+{
+   "results" : [],
+   "status" : "ZERO_RESULTS"
+}

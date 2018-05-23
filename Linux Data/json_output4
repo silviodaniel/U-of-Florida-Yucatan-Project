@@ -1,0 +1,253 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "320",
+               "short_name" : "320",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "Calle 37",
+               "short_name" : "Calle 37",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "San Juan",
+               "short_name" : "San Juan",
+               "types" : [ "political", "sublocality", "sublocality_level_1" ]
+            },
+            {
+               "long_name" : "Motul de Carrillo Puerto",
+               "short_name" : "Motul de Carrillo Puerto",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Yucatán",
+               "short_name" : "Yuc.",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Mexico",
+               "short_name" : "MX",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "97430, Calle 37 320, San Juan, Motul de Carrillo Puerto, Yuc., Mexico",
+         "geometry" : {
+            "location" : {
+               "lat" : 21.0902707,
+               "lng" : -89.29179789999999
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 21.0916196802915,
+                  "lng" : -89.29044891970848
+               },
+               "southwest" : {
+                  "lat" : 21.08892171970849,
+                  "lng" : -89.2931468802915
+               }
+            }
+         },
+         "place_id" : "ChIJL7M79niCVo8RMqWlFgtOOXc",
+         "types" : [ "establishment", "point_of_interest", "school" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "319",
+               "short_name" : "319",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "37",
+               "short_name" : "37",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Rogelio Chale",
+               "short_name" : "Rogelio Chale",
+               "types" : [ "political", "sublocality", "sublocality_level_1" ]
+            },
+            {
+               "long_name" : "Motul de Carrillo Puerto",
+               "short_name" : "Motul de Carrillo Puerto",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Yucatán",
+               "short_name" : "Yuc.",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Mexico",
+               "short_name" : "MX",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "97430",
+               "short_name" : "97430",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "37 319, Rogelio Chale, 97430 Motul de Carrillo Puerto, Yuc., Mexico",
+         "geometry" : {
+            "location" : {
+               "lat" : 21.1002409,
+               "lng" : -89.2775271
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 21.1015898802915,
+                  "lng" : -89.27617811970849
+               },
+               "southwest" : {
+                  "lat" : 21.0988919197085,
+                  "lng" : -89.2788760802915
+               }
+            }
+         },
+         "place_id" : "ChIJncoMHS8oVI8R3C9JKjLFugg",
+         "types" : [ "establishment", "point_of_interest", "school" ]
+      }
+   ],
+   "status" : "OK"
+}
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "337",
+               "short_name" : "337",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "Calle 27",
+               "short_name" : "Calle 27",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Motul de Carrillo Puerto Centro",
+               "short_name" : "Motul de Carrillo Puerto Centro",
+               "types" : [ "political", "sublocality", "sublocality_level_1" ]
+            },
+            {
+               "long_name" : "Motul de Carrillo Puerto",
+               "short_name" : "Motul de Carrillo Puerto",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Yucatán",
+               "short_name" : "Yuc.",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Mexico",
+               "short_name" : "MX",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "97430",
+               "short_name" : "97430",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "Calle 27 337, Motul de Carrillo Puerto Centro, 97430 Motul de Carrillo Puerto, Yuc., Mexico",
+         "geometry" : {
+            "location" : {
+               "lat" : 21.0978686,
+               "lng" : -89.29629799999999
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 21.0992175802915,
+                  "lng" : -89.2949490197085
+               },
+               "southwest" : {
+                  "lat" : 21.0965196197085,
+                  "lng" : -89.2976469802915
+               }
+            }
+         },
+         "place_id" : "ChIJVVVVgdkpVI8RgVTyCSiCKCU",
+         "types" : [ "establishment", "point_of_interest", "school" ]
+      }
+   ],
+   "status" : "OK"
+}
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "Calle 24",
+               "short_name" : "Calle 24",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "San Juan",
+               "short_name" : "San Juan",
+               "types" : [ "political", "sublocality", "sublocality_level_1" ]
+            },
+            {
+               "long_name" : "Ejido del Centro",
+               "short_name" : "Ejido del Centro",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Yucatán",
+               "short_name" : "Yuc.",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Mexico",
+               "short_name" : "MX",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "97430",
+               "short_name" : "97430",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "305,,, Calle 24, San Juan, 97430 Ejido del Centro, Yuc., Mexico",
+         "geometry" : {
+            "location" : {
+               "lat" : 21.0965721,
+               "lng" : -89.2812541
+            },
+            "location_type" : "GEOMETRIC_CENTER",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 21.0979210802915,
+                  "lng" : -89.2799051197085
+               },
+               "southwest" : {
+                  "lat" : 21.0952231197085,
+                  "lng" : -89.28260308029151
+               }
+            }
+         },
+         "place_id" : "ChIJc6i-vysoVI8RJuC-DvpT6fc",
+         "types" : [ "establishment", "point_of_interest", "school" ]
+      }
+   ],
+   "status" : "OK"
+}
+{
+   "results" : [],
+   "status" : "ZERO_RESULTS"
+}
+{
+   "results" : [],
+   "status" : "ZERO_RESULTS"
+}
+{
+   "results" : [],
+   "status" : "ZERO_RESULTS"
+}

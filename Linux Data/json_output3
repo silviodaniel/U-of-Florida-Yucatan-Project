@@ -1,0 +1,123 @@
+{
+   "results" : [],
+   "status" : "ZERO_RESULTS"
+}
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "Tekax",
+               "short_name" : "Tekax",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Yucatan",
+               "short_name" : "Yuc.",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Mexico",
+               "short_name" : "MX",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Tekax, Yucatan, Mexico",
+         "geometry" : {
+            "location" : {
+               "lat" : 20.2119444,
+               "lng" : -89.27638879999999
+            },
+            "location_type" : "GEOMETRIC_CENTER",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 20.2132933802915,
+                  "lng" : -89.27503981970848
+               },
+               "southwest" : {
+                  "lat" : 20.2105954197085,
+                  "lng" : -89.2777377802915
+               }
+            }
+         },
+         "place_id" : "ChIJ9wUpa40EV48RvN-K4gk2xz0",
+         "types" : [ "establishment", "point_of_interest", "school" ]
+      }
+   ],
+   "status" : "OK"
+}
+{
+   "results" : [],
+   "status" : "ZERO_RESULTS"
+}
+{
+   "results" : [],
+   "status" : "ZERO_RESULTS"
+}
+{
+   "results" : [],
+   "status" : "ZERO_RESULTS"
+}
+{
+   "results" : [],
+   "status" : "ZERO_RESULTS"
+}
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "150",
+               "short_name" : "150",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "Calle 24",
+               "short_name" : "Calle 24",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Yocchenkax",
+               "short_name" : "Yocchenkax",
+               "types" : [ "political", "sublocality", "sublocality_level_1" ]
+            },
+            {
+               "long_name" : "Tekax de Álvaro Obregón",
+               "short_name" : "Tekax de Álvaro Obregón",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Yucatán",
+               "short_name" : "Yuc.",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Mexico",
+               "short_name" : "MX",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Calle 24 150, Yocchenkax, Tekax de Álvaro Obregón, Yuc., Mexico",
+         "geometry" : {
+            "location" : {
+               "lat" : 20.1971271,
+               "lng" : -89.2752567
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 20.1984760802915,
+                  "lng" : -89.27390771970849
+               },
+               "southwest" : {
+                  "lat" : 20.1957781197085,
+                  "lng" : -89.27660568029151
+               }
+            }
+         },
+         "place_id" : "ChIJMy_ItPoEV48RyBUO47zNFv0",
+         "types" : [ "establishment", "point_of_interest", "school" ]
+      }
+   ],
+   "status" : "OK"
+}
