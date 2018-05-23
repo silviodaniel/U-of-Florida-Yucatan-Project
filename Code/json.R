@@ -47,7 +47,7 @@ names(locations) <- c("lat", "lng", "location_type", "formatted")
 head(locations)
 
 #Task: to have this output from ldply but have all addresses stored in "address"
-#need to convert CSV file of addresses to the vector in R, separated by commas
+#need to convert CSV file of addresses (addresses2 or escuelas2) to the vector in R, separated by commas
 #need to organize all those that don't have results from API to randomly place coordinates
 #need to find how to randomly place
 
