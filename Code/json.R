@@ -1,5 +1,5 @@
 #usr/bin/R/
-
+setwd("C:/Users/Silvio/Documents/GitHub/U-of-Florida-Yucatan-Project/Linux Data/")
 #### This script uses RCurl and RJSONIO to download data from Google's API:
 #### Latitude, longitude, location type (see explanation at the end), formatted address
 #### Notice ther is a limit of 2,500 calls per day
@@ -53,6 +53,18 @@ head(locations)
 
 address.mod1=read.table("https://raw.githubusercontent.com/silviodaniel/U-of-Florida-Yucatan-Project/master/Linux%20Data/addresses2_mod.csv",
                         header=T);head(address.mod1)
+address.mod1=read.csv("addresses2_mod2.csv",header=T);tail(address.mod1)
+
+address.mod1[3290,]
+class(address.mod1)
+
+try1=as.vector(t(address.mod1))
+head(try1)
+head(unlist(address.mod1))
+
+
+
+
 
 
 

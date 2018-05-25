@@ -20,7 +20,7 @@ colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1",
 head(py)
 ##
 urbana<- st_read(paste0(rootdir,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
-rural<-st_read(paste0(rootdir,mapdir2,"yuc_ageb_rural.shp"),quiet=T)#Encuesta intercensal
+rural<-st_read(paste0(rootdir,mapdir2,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
 encuesta<-read.csv(paste0(rootdir,mapdir2,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
                    header=T)
 # View(encuesta)
@@ -81,6 +81,12 @@ points(schools$x,schools$y,pch='.',col='blue')
 head(students)
 length(students$pid)
 
+
+###
+#Plot one polygon
+plot(urbana$geometry[1])
+plot(rural$geometry[1])
+
 #Haversine function
 earth_r = 6371
 rm(pi)
@@ -108,14 +114,79 @@ plotCircle <- function(x_deg, y_deg, r) {#Radius is in kilometers!
   #browser()
   #angles <- seq(0,2*pi,length.out=360)#between 0 and 2pi
   #lines(r*cos(angles)+x,r*sin(angles)+y)#start at x and y and add
-}#This output is Cartesian not lat long, so have to fix this
+}
+#This output is Cartesian not lat long, so have to fix this
 #must get lines to output the coordinates of x and y in lat/long degrees
 
 # plotCircle(-89.6,21,15)
 # head(schools)
 
+library(sp);library(maptools)
+data(wrld_simpl)
+s <- matrix(as.numeric(NA), nrow(wrld_simpl), 2)
+for (i in seq_len(nrow(s))) s[i,] <- 
+  as.vector(coordinates(spsample(wrld_simpl[i,], type = "random", n = 1, iter = 10)))
+class(wrld_simpl)
+
+res <- SpatialPointsDataFrame(s, as.data.frame(wrld_simpl),
+                              proj4string = CRS(proj4string(wrld_simpl)))
+
 ##
 #Example
+library(sp)
+# Definition of the CRS
+poly.crs <- CRS("+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0")
+
+# Definition of 3 Polygons
+poly.a <- Polygon((matrix(c(-4.653724,1.2210259,-3.803160, 1.3799638, -3.245480, 0.1665987,-4.666098, 0.1097523, -4.653724, 1.2210259), nrow=5, ncol=2, byrow=T)))
+poly.b <- Polygon((matrix(c(-5.820343, 2.675320,-5.427519, 3.062975,-4.701119, 2.819967,-4.555540, 1.855489, -5.050758, 1.388308, -5.783673, 1.572882,-5.820343, 2.675320), nrow=7, ncol=2, byrow=T)))
+poly.c <- Polygon((matrix(c(-3.758639, 2.873654, -3.273958, 3.417311, -2.213099, 2.935320, -1.972031, 1.945992, -3.033510, 1.279312, -3.709359, 1.844633, -3.758639, 2.873654), nrow=7, ncol=2,     byrow=T))) 
+
+# Making a SpatialPolygons
+polys.a = Polygons(list(poly.a), "pa")
+polys.b = Polygons(list(poly.b), "pb")
+polys.c = Polygons(list(poly.c), "pc")
+Spolys = SpatialPolygons(list(polys.a,polys.b,polys.c), 1:3,  proj4string=poly.crs)
+
+# Making a SpatialPolygonsDataFrame
+data.Spolys<- (data.frame(MatchID=c("abcd","efgh","ijkl"), row.names=row.names(Spolys)))
+Poly <- SpatialPolygonsDataFrame(Spolys, data.Spolys, match.ID = TRUE)
+
+
+## Data frame that should be converted in a SpatialPointsDataFrame thanks to the variable "MatchID"
+df <- data.frame(
+  MatchID=c("abcd","abcd","abcd","efgh","efgh","ijkl"),
+  V1 = 1:30,
+  V2 = "a"
+)
+
+
+### Preparing the SpatialPointsDataFrame
+spdf <- matrix(as.numeric(NA), nlevels(Poly$MatchID), 1)
+spdf <- as.list(spdf)
+
+### Sample the coordinate, match it with data in spdf. It creates a list fore each factor of the MatchID
+### sample(spsample()) fix the size of the sample
+
+for (i in seq(Poly$MatchID))
+  spdf= spsample(Poly[order(Poly$MatchID)==i,], n = 100, "stratified")
+  sample(spdf,table(df$MatchID)[[i]])
+
+
+  spdf[i] <- SpatialPointsDataFrame(
+    sample(spsample(Poly[order(Poly$MatchID)==i,], n = 100, "stratified"),table(df$MatchID)[[i]]),  ### table(df$MatchID)[[i]] is the size of the sample and match the sum of factors in df 
+    df[df$MatchID==dimnames(table(df$MatchID))[[1]][i],], ##  dimnames(table(df$MatchID))[[1]][i] ### match the value of the selected "factor" to select the rows of the data
+    proj4string=poly.crs, 
+    match.ID=TRUE)
+
+## Merging together the list to make a SpatialDataFrame
+spdf <- do.call("rbind", spdf)
+
+## Plot 
+plot(Poly[,])
+plot(spdf, add=TRUE, col=spdf$MatchID)
+######################################################################
+#example
 # plot(1:100,type='n')
 # lines(c(0,0,20,0),c(0,20,20,0))#Plot triangle
 # ##
