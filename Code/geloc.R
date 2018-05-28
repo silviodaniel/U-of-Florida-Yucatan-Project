@@ -41,46 +41,76 @@ st_bbox(mex2[1,])#get bbox of first line
 # runif
 
 urbana2<-st_read(paste0(rootdir,mapdir3,"localidad250_a.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
-length(unique(urbana2$nombre))#340 loclaities
+# length(unique(urbana2$nombre))#340 loclaities
 #has good locality names
 addresses2 <- read.csv("Linux Data/addresses2_mod2.csv",header=T,stringsAsFactors = F)
-urbana_mun <- read.csv("Linux Data/localidades urbanas y rurales amanzanadas_mod.csv",header=T)
-urbana_mun <- subset(urbana_mun,urbana_mun$ENTIDAD==31);length(unique(urbana_mun$NOMBRE.DE.LOCALIDAD))
+# urbana_mun <- read.csv("Linux Data/localidades urbanas y rurales amanzanadas_mod.csv",header=T)
+# urbana_mun <- subset(urbana_mun,urbana_mun$ENTIDAD==31);length(unique(urbana_mun$NOMBRE.DE.LOCALIDAD))
 #611 unique localities
-
-urbana3 <- st_read(paste0(rootdir,mapdir4,"yuc_loc_urb.shp"),quiet=T,stringsAsFactors = F);View(urbana3)
-urbana4 <- st_read(paste0(rootdir,mapdir5,"yuc_limite_localidad.shp"),quiet=T,stringsAsFactors = F);View(urbana4)
-length(unique(urbana4$NOMBRE))
+# 
+# urbana3 <- st_read(paste0(rootdir,mapdir4,"yuc_loc_urb.shp"),quiet=T,stringsAsFactors = F);View(urbana3)
+# urbana4 <- st_read(paste0(rootdir,mapdir5,"yuc_limite_localidad.shp"),quiet=T,stringsAsFactors = F);View(urbana4)
+# length(unique(urbana4$NOMBRE))
 #389 localities
-View(urbana_mun)
+# View(urbana_mun)
 
 #############################################
-#CHecking if all localities from addresses2 are in urbana2
-Encoding(urbana2$nombre)
+# Encoding(urbana2$nombre)
 # tail(urbana2$nombre)
 urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
 # urbana4$nombre<- iconv(urbana4$nombre,from="UTF-8",to="ASCII//TRANSLIT")
 
-tail(urbana2)
-urbana2$nombre[338]==addresses2$LOCALIDAD[2451]
+# # tail(urbana2)
+# urbana2$nombre[338]==addresses2$LOCALIDAD[2451]
+# class(urbana2[,7])
+# 'TEYA' %in% urbana2$nombre
 
-class(urbana2[,7])
-
-'TEYA' %in% urbana2$nombre
-
-# missing_urbana2=NULL
-missing_urbana4=NULL
+#CHecking if all localities from addresses2 are in urbana2
+missing_urbana2=NULL
+# missing_urbana4=NULL
 for (i in seq(addresses2$LOCALIDAD)){
-  if (addresses2$LOCALIDAD[i] %in% urbana4$NOMBRE==F ){
-    missing_urbana4[i]=addresses2$LOCALIDAD[i]
+  if (addresses2$LOCALIDAD[i] %in% urbana2$nombre==F ){#if the address is not in urbana2 (==FALSE)
+    missing_urbana2[i]=addresses2$LOCALIDAD[i]
   }
-  else if (addresses2$LOCALIDAD[i] %in% urbana4$NOMBRE){
+  else if (addresses2$LOCALIDAD[i] %in% urbana2$nombre){
     next
   }
 }
-# (head(missing_urbana2))
+
+#Creating vector of localities from addresses2 that are in urbana2
+urbana2_hits=NULL
+# missing_urbana4=NULL
+for (i in seq(addresses2$LOCALIDAD)){
+  if (addresses2$LOCALIDAD[i] %in% urbana2$nombre==T ){#if the address is not in urbana2 (==FALSE)
+    urbana2_hits[i]=addresses2$LOCALIDAD[i]
+  }
+  else if (addresses2$LOCALIDAD[i] %in% urbana2$nombre){
+    next
+  }
+}
+
+head(which(!is.na(urbana2_hits)))
+View(which(!is.na(urbana2_hits)))#2715 urban hits ie the file names match up, out of 3291!
+urbana2_hits <- (which(!is.na(urbana2_hits)))
+
+#new modified addresses with hits from Linux
+addresses2_hits <-read.csv("Linux Data/addresses2_mod2_hits.csv",header=T,stringsAsFactors = F);View(addresses2_hits)
+
+##TO COUNT HOW MANY additional SCHOOL HITS FROM urbana2 by LOCALITY NAME
+#for each i, change the addresses2_hits for that value i position (urbana2_hits[i]) to "success"
+#for i in addresses2_hits, if if that ith position is equal to one 
+# of the position numbers in addresses2_hits, AND
+#urbana2_hits$HITS contains ZERO_RESULTS, and , then replace that value with "locality matches!"
+for (i in seq(length(addresses2_hits$HITS))){
+  if ((i %in% urbana2_hits && grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
+    addresses2_hits$HITS[i] <- "locality matches!"
+  }
+}
+View(addresses2_hits)#works!
+length(which(addresses2_hits$HITS=="locality matches!"))#998 additional hits!
 
 which(!is.na(missing_urbana2))
+unique(missing_urbana2)#count unique localities
 length(unique(missing_urbana2))/length(unique(addresses2$LOCALIDAD))#43% missing localities! 254/587
 #587 unique localities in total, so we have 254 or about 57% of them
 length(unique(missing_urbana4))/length(unique(addresses2$LOCALIDAD))#46% missing localities! 268/587
