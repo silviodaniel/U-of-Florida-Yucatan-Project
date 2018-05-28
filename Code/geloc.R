@@ -1,46 +1,103 @@
+library(cartography)
+library(sf)
+
 rootdir="C:/Users/Silvio/Documents/"
 mapdir="ArcGIS Explorer/My Basemaps/MEX_adm/"
 mapdir2="ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/"
 mapdir3="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
+mapdir4="ArcGIS Explorer/My Basemaps/Diego 2010 census/scince_2010/shps/yuc/"
+mapdir5="ArcGIS Explorer/My Basemaps/eleccion_2010/eleccion_2010/todo/yuc/cartografiadigital_ife/"
+
+
+setwd(paste0(rootdir,"GitHub/U-of-Florida-Yucatan-Project"))
 
 loc <- read.csv("catalogo de municipios.csv")
 head(loc)
 
 colnames(loc) <- c("CVE_ENT", "NAME_ENT", "CVE_MUN", "NAME_MUN")
 
-head(rural)
+mex2 <- st_read(paste0(rootdir,mapdir,"MEX_adm2.shp"),quiet=T,stringsAsFactors = F)
+st_bbox(mex2[1,])#get bbox of first line
 
-rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
-rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
+# urbana<- st_read(paste0(rootdir,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
+# rural<-st_read(paste0(rootdir,mapdir2,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
+# encuesta<-read.csv(paste0(rootdir,mapdir2,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
+#                    header=T)
+# # head(rural)
+# 
+# rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
+# rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
+# 
+# # head(rural)
+# tmp <- left_join(rural, loc)
+# head(tmp)
+# ?left_join.sf
+# 
+# tmp1 <- rural$geometry[1]
+# tmp1
+# ?`cartography-package`
+# getBorders(tmp1)
 
-head(rural)
-tmp <- left_join(rural, loc)
-head(tmp)
-?left_join.sf
-
-tmp1 <- rural$geometry[1]
-tmp1
-?`cartography-package`
-getBorders(tmp1)
-
-runif
+# runif
 
 urbana2<-st_read(paste0(rootdir,mapdir3,"localidad250_a.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
 #has good locality names
+addresses2 <- read.csv("Linux Data/addresses2_mod2.csv",header=T,stringsAsFactors = F)
+urbana_mun <- read.csv("Linux Data/localidades urbanas y rurales amanzanadas_mod.csv",header=T)
+urbana_mun <- subset(urbana_mun,urbana_mun$ENTIDAD==31);length(urbana_mun$LOCALIDAD)
+#649 localities
 
+urbana3 <- st_read(paste0(rootdir,mapdir4,"yuc_loc_urb.shp"),quiet=T,stringsAsFactors = F);View(urbana3)
+urbana4 <- st_read(paste0(rootdir,mapdir5,"yuc_limite_localidad.shp"),quiet=T,stringsAsFactors = F);View(urbana4)
+#396 localities
+View(urbana_mun)
+
+#############################################
+#CHecking if all localities from addresses2 are in urbana2
+Encoding(urbana2$nombre)
+# tail(urbana2$nombre)
+urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
+
+tail(urbana2)
+urbana2$nombre[338]==addresses2$LOCALIDAD[2451]
+
+class(urbana2[,7])
+
+'TEYA' %in% urbana2$nombre
+
+missing_urbana2=NULL
+for (i in seq(addresses2$LOCALIDAD)){
+  if (addresses2$LOCALIDAD[i] %in% urbana2$nombre==F ){
+    missing_urbana2[i]=addresses2$LOCALIDAD[i]
+  }
+  else if (addresses2$LOCALIDAD[i] %in% urbana2$nombre){
+    next
+  }
+}
+(head(missing_urbana2))
+
+which(!is.na(missing_urbana2))
+length(which(!is.na(missing_urbana2)))#how many localities missing from urbana2
+length(which(!is.na(missing_urbana2)))/length(addresses2$LOCALIDAD)#rough percentage of localities missing
+length(unique(missing_urbana2))/length(unique(addresses2$LOCALIDAD))#43% missing localities! 
+#587 unique localities
+
+missing_urbana2[2065:2095]
+#######
 ##############################################
+##importing MEX_adm2-mod.txt
 attach(mex2_mun);names(mex2_mun)
 
 #CHecking which names don't match up btw the 2 columns
 count=NULL
-for (i in seq(1:length(mex2_mun$OBJECTID))){
+for (i in seq(1:length(mex2_mun$NAME_2))){
   if(is.na(mex2_mun$VARNAME_2[i])){
     next
     # count[i]=OBJECTID[i]
   }
   else if(mex2_mun$NAME_2[i]!=mex2_mun$VARNAME_2[i]){
     #return(OBJECTID[i])
-    count[i]=mex2_mun$OBJECTID[i]
+    count[i]=mex2_mun$NAME_2[i]
   }
   else{
     next
