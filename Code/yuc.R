@@ -23,7 +23,7 @@ urbana<- st_read(paste0(rootdir,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta
 rural<-st_read(paste0(rootdir,mapdir2,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
 encuesta<-read.csv(paste0(rootdir,mapdir2,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
                    header=T)
-length(unique(urbana$CVE_LOC))
+length(unique(urbana$CVE_LOC))#only 20 unique localities
 # View(encuesta)
 # View(urbana)
 # head(urbana)
