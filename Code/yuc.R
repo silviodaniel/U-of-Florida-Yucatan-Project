@@ -87,6 +87,7 @@ length(students$pid)
 #Plot one polygon
 plot(urbana$geometry[1])
 plot(rural$geometry[1])
+points(spsample(urbana$geometry[1],n=10,"regular"),pch=3)
 
 #Haversine function
 earth_r = 6371

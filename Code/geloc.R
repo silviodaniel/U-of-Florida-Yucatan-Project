@@ -1,5 +1,6 @@
 library(cartography)
 library(sf)
+library(sp)
 
 rootdir="C:/Users/Silvio/Documents/"
 mapdir="ArcGIS Explorer/My Basemaps/MEX_adm/"
@@ -15,9 +16,6 @@ loc <- read.csv("catalogo de municipios.csv")
 head(loc)
 
 colnames(loc) <- c("CVE_ENT", "NAME_ENT", "CVE_MUN", "NAME_MUN")
-
-mex2 <- st_read(paste0(rootdir,mapdir,"MEX_adm2.shp"),quiet=T,stringsAsFactors = F)
-st_bbox(mex2[1,])#get bbox of first line
 
 # urbana<- st_read(paste0(rootdir,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
 # rural<-st_read(paste0(rootdir,mapdir2,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
@@ -41,6 +39,9 @@ st_bbox(mex2[1,])#get bbox of first line
 # runif
 
 urbana2<-st_read(paste0(rootdir,mapdir3,"localidad250_a.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
+mex2 <- st_read(paste0(rootdir,mapdir,"MEX_adm2.shp"),quiet=T,stringsAsFactors = F)
+mex2 <- subset(mex2, mex2$ID_1==31)
+st_bbox(mex2[1,])#get bbox of first line
 # length(unique(urbana2$nombre))#340 loclaities
 #has good locality names
 addresses2 <- read.csv("Linux Data/addresses2_mod2.csv",header=T,stringsAsFactors = F)
@@ -55,17 +56,9 @@ addresses2 <- read.csv("Linux Data/addresses2_mod2.csv",header=T,stringsAsFactor
 # View(urbana_mun)
 
 #############################################
-# Encoding(urbana2$nombre)
-# tail(urbana2$nombre)
 urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
-# urbana4$nombre<- iconv(urbana4$nombre,from="UTF-8",to="ASCII//TRANSLIT")
 
-# # tail(urbana2)
-# urbana2$nombre[338]==addresses2$LOCALIDAD[2451]
-# class(urbana2[,7])
-# 'TEYA' %in% urbana2$nombre
-
-#CHecking if all localities from addresses2 are in urbana2
+#CHecking which localities from addresses2 are missing in urbana2
 missing_urbana2=NULL
 # missing_urbana4=NULL
 for (i in seq(addresses2$LOCALIDAD)){
@@ -79,7 +72,6 @@ for (i in seq(addresses2$LOCALIDAD)){
 
 #Creating vector of localities from addresses2 that are in urbana2
 urbana2_hits=NULL
-# missing_urbana4=NULL
 for (i in seq(addresses2$LOCALIDAD)){
   if (addresses2$LOCALIDAD[i] %in% urbana2$nombre==T ){#if the address is not in urbana2 (==FALSE)
     urbana2_hits[i]=addresses2$LOCALIDAD[i]
@@ -89,23 +81,112 @@ for (i in seq(addresses2$LOCALIDAD)){
   }
 }
 
-head(which(!is.na(urbana2_hits)))
+##Creating vector of municipios from addresses2 that are in mex2
+mex2_hits=NULL
+for (i in seq(addresses2$LOCALIDAD)){
+  if (addresses2$LOCALIDAD[i] %in% urbana2$nombre==T ){#if the address is not in urbana2 (==FALSE)
+    mex2_hits[i]=addresses2$LOCALIDAD[i]
+  }
+  else if (addresses2$LOCALIDAD[i] %in% urbana2$nombre){
+    next
+  }
+}
+
+
+# head(which(!is.na(urbana2_hits)))
 View(which(!is.na(urbana2_hits)))#2715 urban hits ie the file names match up, out of 3291!
 urbana2_hits <- (which(!is.na(urbana2_hits)))
 
 #new modified addresses with hits from Linux
 addresses2_hits <-read.csv("Linux Data/addresses2_mod2_hits.csv",header=T,stringsAsFactors = F);View(addresses2_hits)
 
+#######################################################################################################
+#Fixing up the mex2 data
+mex2$NAME_2 <- iconv(mex2$NAME_2,from="UTF-8",to="ASCII//TRANSLIT");View(mex2)
+#now, capitalizing
+mex2$NAME_2 <- toupper(mex2$NAME_2)
+
+#CHecking which localities from addresses2 are missing in mex2 (municipalities)
+missing_mex2=NULL
+for (i in seq(addresses2$MUNICIPIO)){
+  if (addresses2$MUNICIPIO[i] %in% mex2$NAME_2==F ){#if the address is not in urbana2 (==FALSE)
+    missing_mex2[i]=addresses2$MUNICIPIO[i]
+  }
+  else if (addresses2$MUNICIPIO[i] %in% mex2$NAME_2){
+    next
+  }
+}
+#findings: there are 106 municipios, and they exactly match up with addresses2 number of municipios, along with
+#number of polygons so each polygon corresponds exactly to 1 municipio
+
+###############################################################################################
+####################################################################################################
 ##TO COUNT HOW MANY additional SCHOOL HITS FROM urbana2 by LOCALITY NAME
 #for each i, change the addresses2_hits for that value i position (urbana2_hits[i]) to "success"
 #for i in addresses2_hits, if if that ith position is equal to one 
 # of the position numbers in addresses2_hits, AND
 #urbana2_hits$HITS contains ZERO_RESULTS, and , then replace that value with "locality matches!"
+
 for (i in seq(length(addresses2_hits$HITS))){
   if ((i %in% urbana2_hits && grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
-    addresses2_hits$HITS[i] <- "locality matches!"
+    addresses2_hits$HITS[i] <- "locality matches!" #phrase: "locality matches!"
   }
 }
+#HOW TO CREATE A FUNCTION BASED ON THIS??
+# add_school_hits=function(hits_vec,phrase){
+#   for (i in seq(length(addresses2_hits$HITS))){
+#     if ((i %in% hits_vec && grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){#hits_vec is urbana2_hits
+#       addresses2_hits$HITS[i] <- phrase #phrase: "locality matches!"
+#     }
+#   }
+# }
+# add_school_hits(urbana2_hits,"locality matches")
+
+View(addresses2_hits)#works!
+length(which(addresses2_hits$HITS=="locality matches!"))#998 additional hits!
+
+which(!is.na(missing_urbana2))
+unique(missing_urbana2)#count unique localities
+length(unique(missing_urbana2))/length(unique(addresses2$LOCALIDAD))#43% missing localities! 254/587
+#587 unique localities in total, so we have 254 or about 57% of them
+length(unique(missing_urbana4))/length(unique(addresses2$LOCALIDAD))#46% missing localities! 268/587
+
+missing_urbana2[2065:2095]
+
+#######
+###############################################################################################
+
+length(which(grepl("ZERO_RESULTS",addresses2_hits$HITS)==T))
+#There should be 193, but there are just 191 no results from addresses2 (won't add up to 3290 schools)
+
+##TO COUNT HOW MANY additional SCHOOL HITS FROM mex2 by MUNICIPALITY NAME
+for (i in seq(length(addresses2_hits$HITS))){
+  if ((grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
+    addresses2_hits$HITS[i] <- "municipality matches!" #phrase: "municipality matches!"
+  }
+}
+
+
+hits_strings=c("ZERO","status","locality")
+#Checking for those 2 missing values
+length(which(grepl("status",addresses2_hits$HITS)==T))#2101
+length(which(grepl("municipality",addresses2_hits$HITS)==T))#191
+length(which(grepl("locality",addresses2_hits$HITS)==T))#998
+
+# for (i in seq(addresses2_hits$HITS)){
+#   if addresses2_hits$HITS[i] %in%
+# }
+
+#HOW TO CREATE A FUNCTION BASED ON THIS??
+# add_school_hits=function(hits_vec,phrase){
+#   for (i in seq(length(addresses2_hits$HITS))){
+#     if ((i %in% hits_vec && grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){#hits_vec is urbana2_hits
+#       addresses2_hits$HITS[i] <- phrase #phrase: "locality matches!"
+#     }
+#   }
+# }
+# add_school_hits(urbana2_hits,"locality matches")
+
 View(addresses2_hits)#works!
 length(which(addresses2_hits$HITS=="locality matches!"))#998 additional hits!
 
@@ -117,7 +198,36 @@ length(unique(missing_urbana4))/length(unique(addresses2$LOCALIDAD))#46% missing
 
 
 missing_urbana2[2065:2095]
-#######
+###################################################################
+#Plot one polygon
+plot(urbana2$geometry[1])
+plot(rural$geometry[1])
+points(spsample(urbana2$geometry[1],n=10,"regular"),pch=3)
+
+#sf add randomly sampled cooordinates
+r.coo=st_sample(urbana2$geometry[1],10,"stratified");r.coo
+sample(r.coo,)
+
+plot(st_geometry(urbana2$geometry[1]))
+plot(st_sample(urbana2$geometry[1],10,"stratified"),add=T, col='#88888888',pch=20)
+
+#df with objectid, nombre, schools needed
+
+#checking which multiple localities
+nombre=urbana2$nombre
+nombre.dummy=NULL
+nombre.repeats=NULL
+for (i in seq(urbana2$nombre)){
+  if (nombre[i] %in% nombre.dummy){
+    nombre.repeats<- append(nombre.repeats,(nombre[i]))
+  }
+  nombre.dummy[i]=nombre[i]
+  next
+}
+
+
+plot(st_geometry(urbana2$geometry[153]))
+plot(st_geometry(urbana2$geometry[317]))
 ##############################################
 ##importing MEX_adm2-mod.txt
 attach(mex2_mun);names(mex2_mun)
