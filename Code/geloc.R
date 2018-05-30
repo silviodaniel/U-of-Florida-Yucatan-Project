@@ -70,8 +70,10 @@ proj4string(nad83_coords)=CRS("+init=esri:102272") # West Illinois
 coordinates_deg <- spTransform(nad83_coords,CRS("+init=epsg:4326"))
 coordinates_deg
 ####
+
 urbana2[1:10]
 urbana2 <- st_transform(urbana2,crs=4326)
+head(urbana2)
 
 ?st_transform()
 
@@ -197,7 +199,6 @@ missing_urbana2[2065:2095]
 
 #######
 ###############################################################################################
-
 length(which(grepl("ZERO_RESULTS",addresses2_hits$HITS)==T))
 #There should be 193, but there are just 191 no results from addresses2 (won't add up to 3290 schools)
 
@@ -208,12 +209,19 @@ for (i in seq(length(addresses2_hits$HITS))){
   }
 }
 
-
+#Figuring out Checking for those 2 missing values
 hits_strings=c("ZERO","status","locality")
-#Checking for those 2 missing values
 length(which(grepl("status",addresses2_hits$HITS)==T))#2101
 length(which(grepl("municipality",addresses2_hits$HITS)==T))#191
 length(which(grepl("locality",addresses2_hits$HITS)==T))#998
+
+checking_status <- subset(addresses2_hits,grepl("status",addresses2_hits$HITS));head(checking_status)
+for (i in seq(checking_status$HITS)){
+  if ((grepl("OK",checking_status$HITS[i])) ==F){
+    print(checking_status[i,])
+  }
+    
+}
 
 # for (i in seq(addresses2_hits$HITS)){
 #   if addresses2_hits$HITS[i] %in%
@@ -240,6 +248,7 @@ length(unique(missing_urbana4))/length(unique(addresses2$LOCALIDAD))#46% missing
 
 missing_urbana2[2065:2095]
 ###################################################################
+####PLOTTING POLYGONS
 #Plot one polygon
 plot(urbana2$geometry[1])
 plot(rural$geometry[1])
@@ -251,18 +260,22 @@ rand.coord=st_sample(urbana2$geometry[1],10,"random");rand.coord
 length(rand.coord)
 
 plot(st_geometry(urbana2$geometry[1]))
-plot(st_sample(urbana2$geometry[1],10,"stratified"),add=T, col='#88888888',pch=20)
+plot(st_sample(urbana2$geometry[1],10,"random"),add=T, col='#88888888',pch=20)
 
-#
-threshold=10
+##cODE For getting right amount of sampling
+#For loop, nesting a while loop with target depending on the numb of schools needed
+target=10
 n <- 0
-while(n <= threshold){
-  rand.coords<- st_sample(urbana2$geometry[1],threshold+2*threshold,"random")
+install.packages("lwgeom")
+library(lwgeom)
+while(n <= target){
+  rand.coords<- st_sample(urbana2$geometry[1],target,"random")#+2*target
   n <- length(rand.coords)
   print(n)
-  if (n >= threshold){
-    i <- sample(x = 1:n, threshold)
-    rand.coords <- rand.coords[i]
+  if (n >= target){
+    portion <- sample(x = 1:n, target)
+    rand.coords <- rand.coords[portion]#sampling from random positions (13,10,12) in rand.coords
+    #from above to get exactly the target of 10
   }
 }
 rand.coords
