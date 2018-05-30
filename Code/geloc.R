@@ -2,27 +2,21 @@ library(cartography)
 library(sf)
 library(sp)
 
-rootdir="C:/Users/Silvio/Documents/"
+rootdir="C:/Users/Silvio/Documents/GitHub/"
+setwd(paste0(rootdir,"U-of-Florida-Yucatan-Project/"))
 mapdir="ArcGIS Explorer/My Basemaps/MEX_adm/"
-mapdir2="ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/"
-mapdir3="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
-mapdir4="ArcGIS Explorer/My Basemaps/Diego 2010 census/scince_2010/shps/yuc/"
-mapdir5="ArcGIS Explorer/My Basemaps/eleccion_2010/eleccion_2010/todo/yuc/cartografiadigital_ife/"
+# mapdir1="ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/"
+mapdir2="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
+# mapdir4="ArcGIS Explorer/My Basemaps/Diego 2010 census/scince_2010/shps/yuc/"
+# mapdir5="ArcGIS Explorer/My Basemaps/eleccion_2010/eleccion_2010/todo/yuc/cartografiadigital_ife/"
 
-
-setwd(paste0(rootdir,"GitHub/U-of-Florida-Yucatan-Project"))
-
-loc <- read.csv("catalogo de municipios.csv")
-head(loc)
-
-colnames(loc) <- c("CVE_ENT", "NAME_ENT", "CVE_MUN", "NAME_MUN")
-
-# urbana<- st_read(paste0(rootdir,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
-# rural<-st_read(paste0(rootdir,mapdir2,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
-# encuesta<-read.csv(paste0(rootdir,mapdir2,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
+#Ben's code below 
+# loc <- read.csv("catalogo de municipios.csv")
+# colnames(loc) <- c("CVE_ENT", "NAME_ENT", "CVE_MUN", "NAME_MUN")
+# urbana<- st_read(paste0(rootdir,mapdir1,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
+# rural<-st_read(paste0(rootdir,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
+# encuesta<-read.csv(paste0(rootdir,mapdir1,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
 #                    header=T)
-# # head(rural)
-# 
 # rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
 # rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
 # 
@@ -37,9 +31,10 @@ colnames(loc) <- c("CVE_ENT", "NAME_ENT", "CVE_MUN", "NAME_MUN")
 # getBorders(tmp1)
 
 # runif
-
-urbana2<-st_read(paste0(rootdir,mapdir3,"localidad250_a.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
-mex2 <- st_read(paste0(rootdir,mapdir,"MEX_adm2.shp"),quiet=T,stringsAsFactors = F)
+###########################################################################################
+urbana2 <- st_read("Shapefiles/INEGI mapa/localidad250_a.shp",quiet=T,stringsAsFactors = F)
+#INEGI mapa
+mex2 <- st_read("Shapefiles/MEX_adm2.shp",quiet=T,stringsAsFactors = F)
 mex2 <- subset(mex2, mex2$ID_1==31)
 st_bbox(mex2[1,])#get bbox of first line
 # length(unique(urbana2$nombre))#340 loclaities
