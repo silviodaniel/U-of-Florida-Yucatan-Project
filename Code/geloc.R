@@ -18,6 +18,10 @@ mapdir2="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
 # rural<-st_read(paste0(rootdir,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
 # encuesta<-read.csv(paste0(rootdir,mapdir1,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
 #                    header=T)
+# urbana_mun <- read.csv("Linux Data/localidades urbanas y rurales amanzanadas_mod.csv",header=T)
+# urbana_mun <- subset(urbana_mun,urbana_mun$ENTIDAD==31);length(unique(urbana_mun$NOMBRE.DE.LOCALIDAD))
+#Encuesta 2015, but same issue that can't geolocate these
+#611 unique localities
 # rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
 # rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
 # 
@@ -41,9 +45,7 @@ st_bbox(mex2[1,])#get bbox of first line
 # length(unique(urbana2$nombre))#340 loclaities
 #has good locality names
 addresses2 <- read.csv("Linux Data/addresses2_mod2.csv",header=T,stringsAsFactors = F)
-# urbana_mun <- read.csv("Linux Data/localidades urbanas y rurales amanzanadas_mod.csv",header=T)
-# urbana_mun <- subset(urbana_mun,urbana_mun$ENTIDAD==31);length(unique(urbana_mun$NOMBRE.DE.LOCALIDAD))
-#611 unique localities
+
 # 
 # urbana3 <- st_read(paste0(rootdir,mapdir4,"yuc_loc_urb.shp"),quiet=T,stringsAsFactors = F);View(urbana3)
 # urbana4 <- st_read(paste0(rootdir,mapdir5,"yuc_limite_localidad.shp"),quiet=T,stringsAsFactors = F);View(urbana4)
@@ -51,6 +53,28 @@ urbana4 <- st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/elecci
 length(unique(urbana4$NOMBRE))
 #389 localities
 # View(urbana_mun)
+
+####################################################################
+##Converting coordinates from NAD83 to WGS84
+library(gdal)
+st_bbox(urbana2[1,])
+
+####Example
+nad83_coords <- data.frame(x=c(577430), y=c(2323270)) # My coordinates in NAD83
+nad83_coords <- nad83_coords *.3048 ## Feet to meters
+coordinates(nad83_coords) <- c('x', 'y')
+proj4string(nad83_coords)=CRS("+init=esri:102272") # West Illinois
+## Erroneous code, NAD83 to NAD83
+## coordinates_deg <- spTransform(nad83_coords,CRS("+init=epsg:3436"))
+## Corrected with WGS84 to yield Lat/Long
+coordinates_deg <- spTransform(nad83_coords,CRS("+init=epsg:4326"))
+coordinates_deg
+####
+urbana2[1:10]
+urbana2 <- st_transform(urbana2,crs=4326)
+
+?st_transform()
+
 
 #############################################
 urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
