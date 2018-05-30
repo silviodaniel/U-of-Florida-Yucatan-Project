@@ -3,6 +3,7 @@ library(sf)
 library(sp)
 
 rootdir="C:/Users/Silvio/Documents/GitHub/"
+#rootdir1="C:/Users/Silvio/Documents/"
 setwd(paste0(rootdir,"U-of-Florida-Yucatan-Project/"))
 mapdir="ArcGIS Explorer/My Basemaps/MEX_adm/"
 # mapdir1="ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/"
@@ -46,7 +47,8 @@ addresses2 <- read.csv("Linux Data/addresses2_mod2.csv",header=T,stringsAsFactor
 # 
 # urbana3 <- st_read(paste0(rootdir,mapdir4,"yuc_loc_urb.shp"),quiet=T,stringsAsFactors = F);View(urbana3)
 # urbana4 <- st_read(paste0(rootdir,mapdir5,"yuc_limite_localidad.shp"),quiet=T,stringsAsFactors = F);View(urbana4)
-# length(unique(urbana4$NOMBRE))
+urbana4 <- st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/eleccion_2010/eleccion_2010/todo/yuc/cartografiadigital_ife/yuc_limite_localidad.shp",quiet=T,stringsAsFactors = F);View(urbana4)
+length(unique(urbana4$NOMBRE))
 #389 localities
 # View(urbana_mun)
 
@@ -75,6 +77,20 @@ for (i in seq(addresses2$LOCALIDAD)){
     next
   }
 }
+urbana2_hits <- (which(!is.na(urbana2_hits)))
+# View(which(!is.na(urbana2_hits)))#2715 urban hits ie the file names match up, out of 3291!
+
+#Copy
+# urbana4_hits=NULL
+# for (i in seq(addresses2$LOCALIDAD)){
+#   if (addresses2$LOCALIDAD[i] %in% urbana4$NOMBRE==T ){#if the address is not in urbana2 (==FALSE)
+#     urbana4_hits[i]=addresses2$LOCALIDAD[i]
+#   }
+#   else if (addresses2$LOCALIDAD[i] %in% urbana4$NOMBRE){
+#     next
+#   }
+# }
+# urbana4_hits <- (which(!is.na(urbana4_hits)))
 
 ##Creating vector of municipios from addresses2 that are in mex2
 mex2_hits=NULL
@@ -87,13 +103,8 @@ for (i in seq(addresses2$LOCALIDAD)){
   }
 }
 
-
 # head(which(!is.na(urbana2_hits)))
-View(which(!is.na(urbana2_hits)))#2715 urban hits ie the file names match up, out of 3291!
-urbana2_hits <- (which(!is.na(urbana2_hits)))
 
-#new modified addresses with hits from Linux
-addresses2_hits <-read.csv("Linux Data/addresses2_mod2_hits.csv",header=T,stringsAsFactors = F);View(addresses2_hits)
 
 #######################################################################################################
 #Fixing up the mex2 data
@@ -122,11 +133,22 @@ for (i in seq(addresses2$MUNICIPIO)){
 # of the position numbers in addresses2_hits, AND
 #urbana2_hits$HITS contains ZERO_RESULTS, and , then replace that value with "locality matches!"
 
+#new modified addresses with hits from Linux
+addresses2_hits <-read.csv("Linux Data/addresses2_mod2_hits.csv",header=T,stringsAsFactors = F);View(addresses2_hits)
+
 for (i in seq(length(addresses2_hits$HITS))){
   if ((i %in% urbana2_hits && grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
     addresses2_hits$HITS[i] <- "locality matches!" #phrase: "locality matches!"
   }
 }
+View(addresses2_hits)
+
+# for (i in seq(length(addresses2_hits$HITS))){
+#   if ((i %in% urbana4_hits && grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
+#     addresses2_hits$HITS[i] <- "locality matches!" #phrase: "locality matches!"
+#   }
+# }
+# View(addresses2_hits)
 #HOW TO CREATE A FUNCTION BASED ON THIS??
 # add_school_hits=function(hits_vec,phrase){
 #   for (i in seq(length(addresses2_hits$HITS))){
@@ -138,7 +160,8 @@ for (i in seq(length(addresses2_hits$HITS))){
 # add_school_hits(urbana2_hits,"locality matches")
 
 View(addresses2_hits)#works!
-length(which(addresses2_hits$HITS=="locality matches!"))#998 additional hits!
+length(which(addresses2_hits$HITS=="locality matches!"))#998 additional hits! (urbana2)
+length(which(addresses2_hits$HITS=="locality matches!"))#951 add hits! (urbana4)
 
 which(!is.na(missing_urbana2))
 unique(missing_urbana2)#count unique localities
