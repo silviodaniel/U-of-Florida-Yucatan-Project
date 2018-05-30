@@ -196,7 +196,6 @@ length(unique(missing_urbana2))/length(unique(addresses2$LOCALIDAD))#43% missing
 #587 unique localities in total, so we have 254 or about 57% of them
 length(unique(missing_urbana4))/length(unique(addresses2$LOCALIDAD))#46% missing localities! 268/587
 
-
 missing_urbana2[2065:2095]
 ###################################################################
 #Plot one polygon
@@ -205,15 +204,30 @@ plot(rural$geometry[1])
 points(spsample(urbana2$geometry[1],n=10,"regular"),pch=3)
 
 #sf add randomly sampled cooordinates
-r.coo=st_sample(urbana2$geometry[1],10,"stratified");r.coo
-sample(r.coo,)
+rand.coord=st_sample(urbana2$geometry[1],10,"random");rand.coord
+# sample(r.coo,)
+length(rand.coord)
 
 plot(st_geometry(urbana2$geometry[1]))
 plot(st_sample(urbana2$geometry[1],10,"stratified"),add=T, col='#88888888',pch=20)
 
+#
+threshold=10
+n <- 0
+while(n <= threshold){
+  rand.coords<- st_sample(urbana2$geometry[1],threshold+2*threshold,"random")
+  n <- length(rand.coords)
+  print(n)
+  if (n >= threshold){
+    i <- sample(x = 1:n, threshold)
+    rand.coords <- rand.coords[i]
+  }
+}
+rand.coords
+
 #df with objectid, nombre, schools needed
 
-#checking which multiple localities
+#checking which multiple localities, repeats, 
 nombre=urbana2$nombre
 nombre.dummy=NULL
 nombre.repeats=NULL
@@ -226,7 +240,7 @@ for (i in seq(urbana2$nombre)){
 }
 
 
-plot(st_geometry(urbana2$geometry[153]))
+plot(st_geometry(urbana2$geometry[153]),add=T, col = "red", lwd = 3)
 plot(st_geometry(urbana2$geometry[317]))
 ##############################################
 ##importing MEX_adm2-mod.txt
