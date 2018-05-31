@@ -1,8 +1,10 @@
 rm(list=ls())
 library(cartography)
-rootdir="C:/Users/Silvio/Documents/"
-mapdir="ArcGIS Explorer/My Basemaps/MEX_adm/"
-mapdir2="ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/"
+rootdir="C:/Users/Silvio/Documents/GitHub/"
+rootdir2="C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/"
+mapdir1="U-of-Florida-Yucatan-Project/Shapefiles/"
+mapdir3="ArcGIS Explorer/My Basemaps/MEX_adm/"
+mapdir2="encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/"
 setwd(paste0(rootdir,"GitHub/U-of-Florida-Yucatan-Project"))
 # install.packages("cluster")
 library(cluster)
@@ -19,8 +21,8 @@ py=left_join(py,ly[,c("workid","x","y")],by="workid")
 colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
 head(py)
 ##
-urbana<- st_read(paste0(rootdir,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
-rural<-st_read(paste0(rootdir,mapdir2,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
+urbana<- st_read(paste0(rootdir2,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
+rural<-st_read(paste0(rootdir2,mapdir2,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
 encuesta<-read.csv(paste0(rootdir,mapdir2,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
                    header=T)
 length(unique(urbana$CVE_LOC))#only 20 unique localities
@@ -29,10 +31,14 @@ length(unique(urbana$CVE_LOC))#only 20 unique localities
 # head(urbana)
 # tail(urbana)
 
-mex0=st_read(paste0(rootdir,mapdir,"MEX_adm0.shp"),
+mex0=st_read(paste0(rootdir,mapdir1,"MEX_adm0.shp"),
              quiet=T)#Diva-GIS
-mex1=st_read(paste0(rootdir,mapdir,"MEX_adm1.shp"),
+mex1=st_read(paste0(rootdir,mapdir1,"MEX_adm1.shp"),
              quiet=T)#Diva-GIS
+mex0 <- st_read(paste0(rootdir2,"gadm36_MEX_shp/gadm36_MEX_0.shp"),quiet=T,stringsAsFactors = F)
+mex1 <- st_read(paste0(rootdir2,"gadm36_MEX_shp/gadm36_MEX_1.shp"),quiet=T,stringsAsFactors = F)
+mex2.1 <- st_read(paste0(rootdir2,"gadm36_MEX_shp/gadm36_MEX_2.shp"),quiet=T,stringsAsFactors = F)
+mex2 <- subset(mex2.1, mex2.1$GID_1=="MEX.31_1")
 
 # class(urbana)
 # plot(st_geometry(urbana))#from encuesta file
@@ -44,8 +50,29 @@ par(mar=c(2.1,2.1,2.1,2.1))#margins
 plot(st_geometry(mex0))#plots all of Mexico
 plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
      col="gray")#takes all Mexico plot, plot just Yucatan
-plot(st_geometry(urbana),add=T,col="brown")
+# plot(st_geometry(mex2),add=T,col="#99FF99")
+# plot(st_geometry(mex2.1),add=T,col="#99FF99")
 plot(st_geometry(rural),add=T,col="#99FF99")
+#are rural and urbana municipalities of different codes??
+# plot(mex2$geometry[88],add=T,col="yellow")#Teya mun
+# plot(mex2$geometry[46],add=T,col="yellow")#Merida mun
+
+plot(rural$geometry[198],add=T,col="yellow")#Teya mun for rural
+plot(rural$geometry[235:239],add=T,col="yellow")#Merida mun for rural
+plot(st_geometry(urbana2),add=T,col="red")
+plot(urbana2$geometry[236],add=T,col="blue")#Teya 
+plot(urbana2$geometry[162],add=T,col="blue")#Cholul urban 
+#only issue is municipalities with rural will not include the urban areas (red areas) enclosed 
+#within them
+#those are like holes, so when we random sample coordinates for those ~200 schools using 
+#municipality shp files, it will not include the urban areas (red areas)
+
+plot(rural$geometry[198],add=T,col="yellow")#Teya mun 
+plot(urbana2$geometry[14],add=T,col="blue")#Cholul rural
+
+
+
+
 
 # plot(st_as_sf(urbana)["CVE_LOC"])
 #plot(st_as_sf(rural)[""])

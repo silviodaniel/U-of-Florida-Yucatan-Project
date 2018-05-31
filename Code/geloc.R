@@ -12,25 +12,25 @@ mapdir2="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
 # mapdir5="ArcGIS Explorer/My Basemaps/eleccion_2010/eleccion_2010/todo/yuc/cartografiadigital_ife/"
 
 #Ben's code below 
-# loc <- read.csv("catalogo de municipios.csv")
-# colnames(loc) <- c("CVE_ENT", "NAME_ENT", "CVE_MUN", "NAME_MUN")
-# urbana<- st_read(paste0(rootdir,mapdir1,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
-# rural<-st_read(paste0(rootdir,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
-# encuesta<-read.csv(paste0(rootdir,mapdir1,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
-#                    header=T)
-# urbana_mun <- read.csv("Linux Data/localidades urbanas y rurales amanzanadas_mod.csv",header=T)
-# urbana_mun <- subset(urbana_mun,urbana_mun$ENTIDAD==31);length(unique(urbana_mun$NOMBRE.DE.LOCALIDAD))
-#Encuesta 2015, but same issue that can't geolocate these
-#611 unique localities
-# rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
-# rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
-# 
-# # head(rural)
-# tmp <- left_join(rural, loc)
-# head(tmp)
-# ?left_join.sf
-# 
-# tmp1 <- rural$geometry[1]
+loc <- read.csv(paste0(rootdir2,mapdir2,"catalogos/catalogo de municipios.csv"));head(loc)
+colnames(loc) <- c("CVE_ENT", "NAME_ENT", "CVE_MUN", "NAME_MUN")
+urbana<- st_read(paste0(rootdir,mapdir1,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
+rural<-st_read(paste0(rootdir,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
+encuesta<-read.csv(paste0(rootdir,mapdir1,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
+                   header=T)
+urbana_mun <- read.csv("Linux Data/localidades urbanas y rurales amanzanadas_mod.csv",header=T)
+urbana_mun <- subset(urbana_mun,urbana_mun$ENTIDAD==31);length(unique(urbana_mun$NOMBRE.DE.LOCALIDAD))
+# Encuesta 2015, but same issue that can't geolocate these
+# 611 unique localities
+rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
+rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
+
+#head(rural)
+tmp <- left_join(rural, loc)
+head(tmp)
+?left_join.sf
+
+tmp1 <- rural$geometry[1]
 # tmp1
 # ?`cartography-package`
 # getBorders(tmp1)
@@ -38,10 +38,11 @@ mapdir2="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
 # runif
 ###########################################################################################
 urbana2 <- st_read("Shapefiles/INEGI mapa/localidad250_a.shp",quiet=T,stringsAsFactors = F)
+urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
 #INEGI mapa
 mex2 <- st_read("Shapefiles/MEX_adm2.shp",quiet=T,stringsAsFactors = F)
 mex2 <- subset(mex2, mex2$ID_1==31)
-st_bbox(mex2[1,])#get bbox of first line
+# st_bbox(mex2[1,])#get bbox of first line
 # length(unique(urbana2$nombre))#340 loclaities
 #has good locality names
 addresses2 <- read.csv("Linux Data/addresses2_mod2.csv",header=T,stringsAsFactors = F)
@@ -49,37 +50,34 @@ addresses2 <- read.csv("Linux Data/addresses2_mod2.csv",header=T,stringsAsFactor
 # 
 # urbana3 <- st_read(paste0(rootdir,mapdir4,"yuc_loc_urb.shp"),quiet=T,stringsAsFactors = F);View(urbana3)
 # urbana4 <- st_read(paste0(rootdir,mapdir5,"yuc_limite_localidad.shp"),quiet=T,stringsAsFactors = F);View(urbana4)
-urbana4 <- st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/eleccion_2010/eleccion_2010/todo/yuc/cartografiadigital_ife/yuc_limite_localidad.shp",quiet=T,stringsAsFactors = F);View(urbana4)
-length(unique(urbana4$NOMBRE))
+# urbana4 <- st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/eleccion_2010/eleccion_2010/todo/yuc/cartografiadigital_ife/yuc_limite_localidad.shp",quiet=T,stringsAsFactors = F);View(urbana4)
+# length(unique(urbana4$NOMBRE))
 #389 localities
 # View(urbana_mun)
 
 ####################################################################
 ##Converting coordinates from NAD83 to WGS84
-library(gdal)
+library(rgdal)
 st_bbox(urbana2[1,])
 
-####Example
-nad83_coords <- data.frame(x=c(577430), y=c(2323270)) # My coordinates in NAD83
-nad83_coords <- nad83_coords *.3048 ## Feet to meters
-coordinates(nad83_coords) <- c('x', 'y')
-proj4string(nad83_coords)=CRS("+init=esri:102272") # West Illinois
-## Erroneous code, NAD83 to NAD83
-## coordinates_deg <- spTransform(nad83_coords,CRS("+init=epsg:3436"))
-## Corrected with WGS84 to yield Lat/Long
-coordinates_deg <- spTransform(nad83_coords,CRS("+init=epsg:4326"))
-coordinates_deg
-####
-
-urbana2[1:10]
+# urbana2[1:10]
 urbana2 <- st_transform(urbana2,crs=4326)
 head(urbana2)
 
-?st_transform()
-
-
+####Example
+#library(rgdal)
+# nad83_coords <- data.frame(x=c(577430), y=c(2323270)) # My coordinates in NAD83
+# nad83_coords <- nad83_coords *.3048 ## Feet to meters
+# coordinates(nad83_coords) <- c('x', 'y')
+# proj4string(nad83_coords)=CRS("+init=esri:102272") # West Illinois
+# ## Erroneous code, NAD83 to NAD83
+# ## coordinates_deg <- spTransform(nad83_coords,CRS("+init=epsg:3436"))
+# ## Corrected with WGS84 to yield Lat/Long
+# coordinates_deg <- spTransform(nad83_coords,CRS("+init=epsg:4326"))
+# coordinates_deg
+# #############################################
+# ?st_transform()
 #############################################
-urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
 
 #CHecking which localities from addresses2 are missing in urbana2
 missing_urbana2=NULL
@@ -93,17 +91,7 @@ for (i in seq(addresses2$LOCALIDAD)){
   }
 }
 
-#Creating vector of localities from addresses2 that are in urbana2
-urbana2_hits=NULL
-for (i in seq(addresses2$LOCALIDAD)){
-  if (addresses2$LOCALIDAD[i] %in% urbana2$nombre==T ){#if the address is not in urbana2 (==FALSE)
-    urbana2_hits[i]=addresses2$LOCALIDAD[i]
-  }
-  else if (addresses2$LOCALIDAD[i] %in% urbana2$nombre){
-    next
-  }
-}
-urbana2_hits <- (which(!is.na(urbana2_hits)))
+
 # View(which(!is.na(urbana2_hits)))#2715 urban hits ie the file names match up, out of 3291!
 
 #Copy
@@ -159,6 +147,17 @@ for (i in seq(addresses2$MUNICIPIO)){
 # of the position numbers in addresses2_hits, AND
 #urbana2_hits$HITS contains ZERO_RESULTS, and , then replace that value with "locality matches!"
 
+#Creating vector of localities from addresses2 that are in urbana2
+urbana2_hits=NULL
+for (i in seq(addresses2$LOCALIDAD)){
+  if (addresses2$LOCALIDAD[i] %in% urbana2$nombre==T ){#if the address is not in urbana2 (==FALSE)
+    urbana2_hits[i]=addresses2$LOCALIDAD[i]
+  }
+  else if (addresses2$LOCALIDAD[i] %in% urbana2$nombre){
+    next
+  }
+}
+urbana2_hits <- (which(!is.na(urbana2_hits)))
 #new modified addresses with hits from Linux
 addresses2_hits <-read.csv("Linux Data/addresses2_mod2_hits.csv",header=T,stringsAsFactors = F);View(addresses2_hits)
 
@@ -167,6 +166,14 @@ for (i in seq(length(addresses2_hits$HITS))){
     addresses2_hits$HITS[i] <- "locality matches!" #phrase: "locality matches!"
   }
 }
+
+##TO COUNT HOW MANY additional SCHOOL HITS FROM mex2 by MUNICIPALITY NAME
+for (i in seq(length(addresses2_hits$HITS))){
+  if ((grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
+    addresses2_hits$HITS[i] <- "municipality matches!" #phrase: "municipality matches!"
+  }
+}
+
 View(addresses2_hits)
 
 # for (i in seq(length(addresses2_hits$HITS))){
@@ -202,26 +209,21 @@ missing_urbana2[2065:2095]
 length(which(grepl("ZERO_RESULTS",addresses2_hits$HITS)==T))
 #There should be 193, but there are just 191 no results from addresses2 (won't add up to 3290 schools)
 
-##TO COUNT HOW MANY additional SCHOOL HITS FROM mex2 by MUNICIPALITY NAME
-for (i in seq(length(addresses2_hits$HITS))){
-  if ((grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
-    addresses2_hits$HITS[i] <- "municipality matches!" #phrase: "municipality matches!"
-  }
-}
 
 #Figuring out Checking for those 2 missing values
 hits_strings=c("ZERO","status","locality")
-length(which(grepl("status",addresses2_hits$HITS)==T))#2101
+length(which(grepl("OK",addresses2_hits$HITS)==T))#2101
 length(which(grepl("municipality",addresses2_hits$HITS)==T))#191
 length(which(grepl("locality",addresses2_hits$HITS)==T))#998
 
-checking_status <- subset(addresses2_hits,grepl("status",addresses2_hits$HITS));head(checking_status)
-for (i in seq(checking_status$HITS)){
-  if ((grepl("OK",checking_status$HITS[i])) ==F){
-    print(checking_status[i,])
-  }
-    
-}
+#Now, it's good! no need for this looop anymore
+# checking_status <- subset(addresses2_hits,grepl("status",addresses2_hits$HITS));head(checking_status)
+# for (i in seq(checking_status$HITS)){
+#   if ((grepl("OK",checking_status$HITS[i])) ==F){
+#     print(checking_status[i,])
+#   }
+#     
+# }
 
 # for (i in seq(addresses2_hits$HITS)){
 #   if addresses2_hits$HITS[i] %in%
@@ -266,16 +268,19 @@ plot(st_sample(urbana2$geometry[1],10,"random"),add=T, col='#88888888',pch=20)
 #For loop, nesting a while loop with target depending on the numb of schools needed
 target=10
 n <- 0
-install.packages("lwgeom")
+# install.packages("lwgeom")
 library(lwgeom)
-while(n <= target){
-  rand.coords<- st_sample(urbana2$geometry[1],target,"random")#+2*target
-  n <- length(rand.coords)
-  print(n)
-  if (n >= target){
-    portion <- sample(x = 1:n, target)
-    rand.coords <- rand.coords[portion]#sampling from random positions (13,10,12) in rand.coords
-    #from above to get exactly the target of 10
+
+for (i in seq()){
+  while(n <= target){
+    rand.coords<- st_sample(urbana2$geometry[1],target,"random")#+2*target
+    n <- length(rand.coords)
+    print(n)
+    if (n >= target){
+      portion <- sample(x = 1:n, target)
+      rand.coords <- rand.coords[portion]#sampling from random positions (13,10,12) in rand.coords
+      #from above to get exactly the target of 10
+    }
   }
 }
 rand.coords
@@ -294,6 +299,15 @@ for (i in seq(urbana2$nombre)){
   next
 }
 
+plot(mex2$geometry[46])#plotting Merida, 46; Opichen in 55; tekax & tizimin, 79 & 96; Teya, 88; 
+plot(urbana2$geometry[162],add=T)#14 and 162 for Cholul; 61 and 222 for Opichen; 102, 130 MCP
+#43,236 for Teya; 
+plot(urbana2$geometry[14],add=T)
+
+#cHANGING LOCALITIES, RENAMING SOME, REMOVING OTHERS THAT ARE DUPLICATES
+urbana2$nombre[162] <- "CHOLUL MERIDA"
+
+# urbana2<- urbana2[-61,]
 
 plot(st_geometry(urbana2$geometry[153]),add=T, col = "red", lwd = 3)
 plot(st_geometry(urbana2$geometry[317]))
