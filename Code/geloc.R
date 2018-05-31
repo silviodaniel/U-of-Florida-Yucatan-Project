@@ -299,12 +299,19 @@ for (i in seq(urbana2$nombre)){
   next
 }
 
+#Plotting localities and municipalities
 plot(mex2$geometry[46])#plotting Merida, 46; Opichen in 55; tekax & tizimin, 79 & 96; Teya, 88; 
-plot(urbana2$geometry[162],add=T)#14 and 162 for Cholul; 61 and 222 for Opichen; 102, 130 MCP
-#43,236 for Teya; 
-plot(urbana2$geometry[14],add=T)
+plot(rural$geometry[96:99],col="green")#MUNICIPIOS: Merida (235:239) & Cantamayec (101:103) for Cholul
+#Opichen: 137 Opichen, Opichen; MCP: NA; Teya, Teya (198)
+#Kimbila: Izamal (72:78) & Tixmehuac (64:65)
+#Temozon: Temozon (209:213) & Abala (86:87)
+#Ticimul: Chankom 96:99 (& Umal, but that one is fully matched)
+plot(urbana2$geometry[292],add=T,col="blue")#14 and 162 for Cholul; 61 and 222 for Opichen; 102, 130 MCP
+#43,236 for Teya; 123,242 for Kimbila ; Temozon (1, 262); Ticimul (292,295); 
+plot(urbana2$geometry[295],add=T,col="blue")
+plot(urbana2$geometry[14])#,add=T,col="blue")
 
-#cHANGING LOCALITIES, RENAMING SOME, REMOVING OTHERS THAT ARE DUPLICATES
+####cHANGING LOCALITIES, RENAMING SOME, REMOVING OTHERS THAT ARE DUPLICATES
 urbana2$nombre[162] <- "CHOLUL MERIDA"
 
 # urbana2<- urbana2[-61,]
