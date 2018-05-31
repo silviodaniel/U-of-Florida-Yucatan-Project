@@ -1,6 +1,7 @@
 library(cartography)
 library(sf)
 library(sp)
+library(rgdal)
 
 rootdir="C:/Users/Silvio/Documents/GitHub/"
 #rootdir1="C:/Users/Silvio/Documents/"
@@ -39,6 +40,9 @@ tmp1 <- rural$geometry[1]
 ###########################################################################################
 urbana2 <- st_read("Shapefiles/INEGI mapa/localidad250_a.shp",quiet=T,stringsAsFactors = F)
 urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
+urbana2 <- st_transform(urbana2,crs=4326)##Converting coordinates from NAD83 to WGS84
+
+
 #INEGI mapa
 mex2 <- st_read("Shapefiles/MEX_adm2.shp",quiet=T,stringsAsFactors = F)
 mex2 <- subset(mex2, mex2$ID_1==31)
@@ -56,13 +60,6 @@ addresses2 <- read.csv("Linux Data/addresses2_mod2.csv",header=T,stringsAsFactor
 # View(urbana_mun)
 
 ####################################################################
-##Converting coordinates from NAD83 to WGS84
-library(rgdal)
-st_bbox(urbana2[1,])
-
-# urbana2[1:10]
-urbana2 <- st_transform(urbana2,crs=4326)
-head(urbana2)
 
 ####Example
 #library(rgdal)
@@ -301,23 +298,25 @@ for (i in seq(urbana2$nombre)){
 
 #Plotting localities and municipalities
 plot(mex2$geometry[46])#plotting Merida, 46; Opichen in 55; tekax & tizimin, 79 & 96; Teya, 88; 
-plot(rural$geometry[96:99],col="green")#MUNICIPIOS: Merida (235:239) & Cantamayec (101:103) for Cholul
+plot(rural$geometry[332:333],col="green")#MUNICIPIOS: Merida (235:239) & Cantamayec (101:103) for Cholul
 #Opichen: 137 Opichen, Opichen; MCP: NA; Teya, Teya (198)
 #Kimbila: Izamal (72:78) & Tixmehuac (64:65)
 #Temozon: Temozon (209:213) & Abala (86:87)
 #Ticimul: Chankom 96:99 (& Umal, but that one is fully matched)
-plot(urbana2$geometry[292],add=T,col="blue")#14 and 162 for Cholul; 61 and 222 for Opichen; 102, 130 MCP
-#43,236 for Teya; 123,242 for Kimbila ; Temozon (1, 262); Ticimul (292,295); 
-plot(urbana2$geometry[295],add=T,col="blue")
+#Xuilub: Espita 332:333 (& Valladolid but fully matched)
+plot(urbana2$geometry[153],add=T,col="blue")#14 and 162 for Cholul; 61 and 222 for Opichen; 102, 130 MCP
+#43,236 for Teya; 123,242 for Kimbila ; Temozon (1, 262); Ticimul (292,295); Xuilub (153,317)
+plot(urbana2$geometry[317],add=T,col="blue")
 plot(urbana2$geometry[14])#,add=T,col="blue")
 
 ####cHANGING LOCALITIES, RENAMING SOME, REMOVING OTHERS THAT ARE DUPLICATES
 urbana2$nombre[162] <- "CHOLUL MERIDA"
-
-# urbana2<- urbana2[-61,]
+urbana2$nombre[1] <- "TEMOZON ABALA"
+urbana2 <- urbana2[-c(43,61,102,153,242,295),]
 
 plot(st_geometry(urbana2$geometry[153]),add=T, col = "red", lwd = 3)
 plot(st_geometry(urbana2$geometry[317]))
+#So now we have 342 unique localities and polygons!
 ##############################################
 ##importing MEX_adm2-mod.txt
 attach(mex2_mun);names(mex2_mun)
