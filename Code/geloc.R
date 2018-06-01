@@ -2,6 +2,7 @@ library(cartography)
 library(sf)
 library(sp)
 library(rgdal)
+library(dplyr)
 
 rootdir="C:/Users/Silvio/Documents/GitHub/"
 #rootdir1="C:/Users/Silvio/Documents/"
@@ -13,10 +14,10 @@ mapdir2="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
 # mapdir5="ArcGIS Explorer/My Basemaps/eleccion_2010/eleccion_2010/todo/yuc/cartografiadigital_ife/"
 
 #Ben's code below 
-loc <- read.csv(paste0(rootdir2,mapdir2,"catalogos/catalogo de municipios.csv"));head(loc)
+loc <- read.csv("catalogo de municipios.csv");head(loc)
 colnames(loc) <- c("CVE_ENT", "NAME_ENT", "CVE_MUN", "NAME_MUN")
-urbana<- st_read(paste0(rootdir,mapdir1,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
 rural<-st_read(paste0(rootdir,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
+urbana<- st_read(paste0(rootdir,mapdir1,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
 encuesta<-read.csv(paste0(rootdir,mapdir1,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
                    header=T)
 urbana_mun <- read.csv("Linux Data/localidades urbanas y rurales amanzanadas_mod.csv",header=T)
@@ -38,10 +39,13 @@ tmp1 <- rural$geometry[1]
 
 # runif
 ###########################################################################################
+rural<-st_read(paste0(rootdir,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
+rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
 urbana2 <- st_read("Shapefiles/INEGI mapa/localidad250_a.shp",quiet=T,stringsAsFactors = F)
 urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
 urbana2 <- st_transform(urbana2,crs=4326)##Converting coordinates from NAD83 to WGS84
-
+municipios<- read.csv("catalogo de municipios_mod.csv",header=T,stringsAsFactors = F);View(municipios)
+municipios$Nombre.del.Municipio <- toupper(municipios$Nombre.del.Municipio)
 
 #INEGI mapa
 mex2 <- st_read("Shapefiles/MEX_adm2.shp",quiet=T,stringsAsFactors = F)
@@ -103,16 +107,20 @@ for (i in seq(addresses2$LOCALIDAD)){
 # }
 # urbana4_hits <- (which(!is.na(urbana4_hits)))
 
-##Creating vector of municipios from addresses2 that are in mex2
-mex2_hits=NULL
-for (i in seq(addresses2$LOCALIDAD)){
-  if (addresses2$LOCALIDAD[i] %in% urbana2$nombre==T ){#if the address is not in urbana2 (==FALSE)
-    mex2_hits[i]=addresses2$LOCALIDAD[i]
+##Creating vector of municipios from addresses2 that are in rural file municipalities
+nombre.municipios <- municipios$Nombre.del.Municipio
+rural_hits=NULL
+for (i in seq(addresses2$MUNICIPIO)){
+  if (addresses2$MUNICIPIO[i] %in% nombre.municipios==T){#if the municipality is in rural.shp 
+    rural_hits[i]=addresses2$MUNICIPIO[i]
   }
-  else if (addresses2$LOCALIDAD[i] %in% urbana2$nombre){
+  else {
     next
   }
 }
+
+rural_hits <- (which(!is.na(rural_hits)))
+length((unique(rural_hits)))#106 municipalities and all match!
 
 # head(which(!is.na(urbana2_hits)))
 
@@ -317,6 +325,7 @@ urbana2 <- urbana2[-c(43,61,102,153,242,295),]
 plot(st_geometry(urbana2$geometry[153]),add=T, col = "red", lwd = 3)
 plot(st_geometry(urbana2$geometry[317]))
 #So now we have 342 unique localities and polygons!
+
 ##############################################
 ##importing MEX_adm2-mod.txt
 attach(mex2_mun);names(mex2_mun)
