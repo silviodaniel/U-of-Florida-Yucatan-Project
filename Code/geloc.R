@@ -5,10 +5,10 @@ library(rgdal)
 library(dplyr)
 
 rootdir="C:/Users/Silvio/Documents/GitHub/"
-#rootdir1="C:/Users/Silvio/Documents/"
+rootdir1="C:/Users/Silvio/Documents/"
 setwd(paste0(rootdir,"U-of-Florida-Yucatan-Project/"))
 mapdir="ArcGIS Explorer/My Basemaps/MEX_adm/"
-# mapdir1="ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/"
+mapdir1="ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/"
 mapdir2="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
 # mapdir4="ArcGIS Explorer/My Basemaps/Diego 2010 census/scince_2010/shps/yuc/"
 # mapdir5="ArcGIS Explorer/My Basemaps/eleccion_2010/eleccion_2010/todo/yuc/cartografiadigital_ife/"
@@ -16,16 +16,14 @@ mapdir2="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
 #Ben's code below 
 loc <- read.csv("catalogo de municipios.csv");head(loc)
 colnames(loc) <- c("CVE_ENT", "NAME_ENT", "CVE_MUN", "NAME_MUN")
-rural<-st_read(paste0(rootdir,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
-urbana<- st_read(paste0(rootdir,mapdir1,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
-encuesta<-read.csv(paste0(rootdir,mapdir1,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
-                   header=T)
-urbana_mun <- read.csv("Linux Data/localidades urbanas y rurales amanzanadas_mod.csv",header=T)
-urbana_mun <- subset(urbana_mun,urbana_mun$ENTIDAD==31);length(unique(urbana_mun$NOMBRE.DE.LOCALIDAD))
+# rural<-st_read( "C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/yuc_ageb_rural.shp",quiet=T,stringsAsFactors = F)#Encuesta intercensal
+# urbana<- st_read(paste0(rootdir,mapdir1,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
+# encuesta<-read.csv(paste0(rootdir,mapdir1,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
+#                    header=T)
+# urbana_mun <- read.csv("Linux Data/localidades urbanas y rurales amanzanadas_mod.csv",header=T)
+# urbana_mun <- subset(urbana_mun,urbana_mun$ENTIDAD==31);length(unique(urbana_mun$NOMBRE.DE.LOCALIDAD))
 # Encuesta 2015, but same issue that can't geolocate these
 # 611 unique localities
-rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
-rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
 
 #head(rural)
 tmp <- left_join(rural, loc)
@@ -39,8 +37,9 @@ tmp1 <- rural$geometry[1]
 
 # runif
 ###########################################################################################
-rural<-st_read(paste0(rootdir,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
+rural<-st_read(paste0(rootdir1,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
 rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
+rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
 urbana2 <- st_read("Shapefiles/INEGI mapa/localidad250_a.shp",quiet=T,stringsAsFactors = F)
 urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
 urbana2 <- st_transform(urbana2,crs=4326)##Converting coordinates from NAD83 to WGS84
@@ -48,9 +47,9 @@ municipios<- read.csv("catalogo de municipios_mod.csv",header=T,stringsAsFactors
 municipios$Nombre.del.Municipio <- toupper(municipios$Nombre.del.Municipio)
 
 #INEGI mapa
-mex2 <- st_read("Shapefiles/MEX_adm2.shp",quiet=T,stringsAsFactors = F)
-mex2 <- subset(mex2, mex2$ID_1==31)
-# st_bbox(mex2[1,])#get bbox of first line
+# mex2 <- st_read("Shapefiles/MEX_adm2.shp",quiet=T,stringsAsFactors = F)
+# mex2 <- subset(mex2, mex2$ID_1==31)
+# # st_bbox(mex2[1,])#get bbox of first line
 # length(unique(urbana2$nombre))#340 loclaities
 #has good locality names
 addresses2 <- read.csv("Linux Data/addresses2_mod2.csv",header=T,stringsAsFactors = F)
@@ -119,7 +118,7 @@ for (i in seq(addresses2$MUNICIPIO)){
   }
 }
 
-rural_hits <- (which(!is.na(rural_hits)))
+# rural_hits <- (which(!is.na(rural_hits)))
 length((unique(rural_hits)))#106 municipalities and all match!
 
 # head(which(!is.na(urbana2_hits)))
@@ -127,20 +126,20 @@ length((unique(rural_hits)))#106 municipalities and all match!
 
 #######################################################################################################
 #Fixing up the mex2 data
-mex2$NAME_2 <- iconv(mex2$NAME_2,from="UTF-8",to="ASCII//TRANSLIT");View(mex2)
-#now, capitalizing
-mex2$NAME_2 <- toupper(mex2$NAME_2)
-
-#CHecking which localities from addresses2 are missing in mex2 (municipalities)
-missing_mex2=NULL
-for (i in seq(addresses2$MUNICIPIO)){
-  if (addresses2$MUNICIPIO[i] %in% mex2$NAME_2==F ){#if the address is not in urbana2 (==FALSE)
-    missing_mex2[i]=addresses2$MUNICIPIO[i]
-  }
-  else if (addresses2$MUNICIPIO[i] %in% mex2$NAME_2){
-    next
-  }
-}
+# mex2$NAME_2 <- iconv(mex2$NAME_2,from="UTF-8",to="ASCII//TRANSLIT");View(mex2)
+# #now, capitalizing
+# mex2$NAME_2 <- toupper(mex2$NAME_2)
+# 
+# #CHecking which localities from addresses2 are missing in mex2 (municipalities)
+# missing_mex2=NULL
+# for (i in seq(addresses2$MUNICIPIO)){
+#   if (addresses2$MUNICIPIO[i] %in% mex2$NAME_2==F ){#if the address is not in urbana2 (==FALSE)
+#     missing_mex2[i]=addresses2$MUNICIPIO[i]
+#   }
+#   else if (addresses2$MUNICIPIO[i] %in% mex2$NAME_2){
+#     next
+#   }
+# }
 #findings: there are 106 municipios, and they exactly match up with addresses2 number of municipios, along with
 #number of polygons so each polygon corresponds exactly to 1 municipio
 
@@ -164,7 +163,8 @@ for (i in seq(addresses2$LOCALIDAD)){
 }
 urbana2_hits <- (which(!is.na(urbana2_hits)))
 #new modified addresses with hits from Linux
-addresses2_hits <-read.csv("Linux Data/addresses2_mod2_hits.csv",header=T,stringsAsFactors = F);View(addresses2_hits)
+####
+addresses2_hits <-read.csv("Linux Data/addresses2_mod2_hits.csv",header=T,stringsAsFactors = F)#;View(addresses2_hits)
 
 for (i in seq(length(addresses2_hits$HITS))){
   if ((i %in% urbana2_hits && grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
@@ -180,7 +180,7 @@ for (i in seq(length(addresses2_hits$HITS))){
 }
 
 View(addresses2_hits)
-
+####
 # for (i in seq(length(addresses2_hits$HITS))){
 #   if ((i %in% urbana4_hits && grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
 #     addresses2_hits$HITS[i] <- "locality matches!" #phrase: "locality matches!"
