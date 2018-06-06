@@ -172,7 +172,7 @@ for (i in seq(length(addresses2_hits$HITS))){
   }
 }
 
-##TO COUNT HOW MANY additional SCHOOL HITS FROM mex2 by MUNICIPALITY NAME
+##TO COUNT HOW MANY additional SCHOOL HITS for municipalities (just those left over)
 for (i in seq(length(addresses2_hits$HITS))){
   if ((grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
     addresses2_hits$HITS[i] <- "municipality matches!" #phrase: "municipality matches!"
@@ -180,6 +180,7 @@ for (i in seq(length(addresses2_hits$HITS))){
 }
 
 View(addresses2_hits)
+
 ####
 # for (i in seq(length(addresses2_hits$HITS))){
 #   if ((i %in% urbana4_hits && grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
@@ -197,8 +198,7 @@ View(addresses2_hits)
 # }
 # add_school_hits(urbana2_hits,"locality matches")
 
-View(addresses2_hits)#works!
-length(which(addresses2_hits$HITS=="locality matches!"))#998 additional hits! (urbana2)
+length(which(addresses2_hits$HITS=="locality matches!"))#989 additional hits (versus 998 before)! (urbana2)
 length(which(addresses2_hits$HITS=="locality matches!"))#951 add hits! (urbana4)
 
 which(!is.na(missing_urbana2))
@@ -214,12 +214,11 @@ missing_urbana2[2065:2095]
 length(which(grepl("ZERO_RESULTS",addresses2_hits$HITS)==T))
 #There should be 193, but there are just 191 no results from addresses2 (won't add up to 3290 schools)
 
-
 #Figuring out Checking for those 2 missing values
 hits_strings=c("ZERO","status","locality")
-length(which(grepl("OK",addresses2_hits$HITS)==T))#2101
-length(which(grepl("municipality",addresses2_hits$HITS)==T))#191
-length(which(grepl("locality",addresses2_hits$HITS)==T))#998
+length(which(grepl("OK",addresses2_hits$HITS)==T))#2102 (previously 2101)
+length(which(grepl("municipality",addresses2_hits$HITS)==T))#199 (vs 191)
+length(which(grepl("locality",addresses2_hits$HITS)==T))#989 (vs 998)
 
 #Now, it's good! no need for this looop anymore
 # checking_status <- subset(addresses2_hits,grepl("status",addresses2_hits$HITS));head(checking_status)
@@ -305,17 +304,17 @@ for (i in seq(urbana2$nombre)){
 }
 
 #Plotting localities and municipalities
-plot(mex2$geometry[46])#plotting Merida, 46; Opichen in 55; tekax & tizimin, 79 & 96; Teya, 88; 
-plot(rural$geometry[332:333],col="green")#MUNICIPIOS: Merida (235:239) & Cantamayec (101:103) for Cholul
-#Opichen: 137 Opichen, Opichen; MCP: NA; Teya, Teya (198)
-#Kimbila: Izamal (72:78) & Tixmehuac (64:65)
-#Temozon: Temozon (209:213) & Abala (86:87)
-#Ticimul: Chankom 96:99 (& Umal, but that one is fully matched)
-#Xuilub: Espita 332:333 (& Valladolid but fully matched)
-plot(urbana2$geometry[153],add=T,col="blue")#14 and 162 for Cholul; 61 and 222 for Opichen; 102, 130 MCP
-#43,236 for Teya; 123,242 for Kimbila ; Temozon (1, 262); Ticimul (292,295); Xuilub (153,317)
-plot(urbana2$geometry[317],add=T,col="blue")
-plot(urbana2$geometry[14])#,add=T,col="blue")
+# plot(mex2$geometry[46])#plotting Merida, 46; Opichen in 55; tekax & tizimin, 79 & 96; Teya, 88; 
+# plot(rural$geometry[332:333],col="green")#MUNICIPIOS: Merida (235:239) & Cantamayec (101:103) for Cholul
+# #Opichen: 137 Opichen, Opichen; MCP: NA; Teya, Teya (198)
+# #Kimbila: Izamal (72:78) & Tixmehuac (64:65)
+# #Temozon: Temozon (209:213) & Abala (86:87)
+# #Ticimul: Chankom 96:99 (& Umal, but that one is fully matched)
+# #Xuilub: Espita 332:333 (& Valladolid but fully matched)
+# plot(urbana2$geometry[153],add=T,col="blue")#14 and 162 for Cholul; 61 and 222 for Opichen; 102, 130 MCP
+# #43,236 for Teya; 123,242 for Kimbila ; Temozon (1, 262); Ticimul (292,295); Xuilub (153,317)
+# plot(urbana2$geometry[317],add=T,col="blue")
+# plot(urbana2$geometry[14])#,add=T,col="blue")
 
 ####cHANGING LOCALITIES, RENAMING SOME, REMOVING OTHERS THAT ARE DUPLICATES
 urbana2$nombre[162] <- "CHOLUL MERIDA"
@@ -328,40 +327,40 @@ plot(st_geometry(urbana2$geometry[317]))
 
 ##############################################
 ##importing MEX_adm2-mod.txt
-attach(mex2_mun);names(mex2_mun)
+# attach(mex2_mun);names(mex2_mun)
 
 #CHecking which names don't match up btw the 2 columns
-count=NULL
-for (i in seq(1:length(mex2_mun$NAME_2))){
-  if(is.na(mex2_mun$VARNAME_2[i])){
-    next
-    # count[i]=OBJECTID[i]
-  }
-  else if(mex2_mun$NAME_2[i]!=mex2_mun$VARNAME_2[i]){
-    #return(OBJECTID[i])
-    count[i]=mex2_mun$NAME_2[i]
-  }
-  else{
-    next
-    # print("success")
-  }
-}
+# count=NULL
+# for (i in seq(1:length(mex2_mun$NAME_2))){
+#   if(is.na(mex2_mun$VARNAME_2[i])){
+#     next
+#     # count[i]=OBJECTID[i]
+#   }
+#   else if(mex2_mun$NAME_2[i]!=mex2_mun$VARNAME_2[i]){
+#     #return(OBJECTID[i])
+#     count[i]=mex2_mun$NAME_2[i]
+#   }
+#   else{
+#     next
+#     # print("success")
+#   }
+# }
 
-length(count)-length(which(is.na(count)))
-#91 names don't match up in total
-
-length(count[1692:1797])-length(which(is.na(count[1692:1797])))
-#only 1 name doesn't match up, shown below
-which(!is.na(count[1692:1797]))
-count[1696]
-#OK, so row 1696 is Bokoba in NAME_2 and Bokova in VARNAME_2, but the former is correct!
-#So we can just use the NAME_2 column
-mex_short=data.frame(CVE_ENT=mex2_mun$ID_1[1692:1797], NAME_ENT=mex2_mun$NAME_1[1692:1797],
-                     CVE_MUN=seq(1692:1797),NAME_MUN=mex2_mun$NAME_2[1692:1797])
-
-###
-test=left_join(rural,mex_short);head(test)
-##!!!! ISSUE: mex is not the same order as rural, and anyways have to change the 
+# length(count)-length(which(is.na(count)))
+# #91 names don't match up in total
+# 
+# length(count[1692:1797])-length(which(is.na(count[1692:1797])))
+# #only 1 name doesn't match up, shown below
+# which(!is.na(count[1692:1797]))
+# count[1696]
+# #OK, so row 1696 is Bokoba in NAME_2 and Bokova in VARNAME_2, but the former is correct!
+# #So we can just use the NAME_2 column
+# mex_short=data.frame(CVE_ENT=mex2_mun$ID_1[1692:1797], NAME_ENT=mex2_mun$NAME_1[1692:1797],
+#                      CVE_MUN=seq(1692:1797),NAME_MUN=mex2_mun$NAME_2[1692:1797])
+# 
+# ###
+# test=left_join(rural,mex_short);head(test)
+# ##!!!! ISSUE: mex is not the same order as rural, and anyways have to change the 
 #order to mex bc this is the shp file we will use, so take away rural and use mex2!
 
 # gsub("[[:punct:]]","",NAME_2)
