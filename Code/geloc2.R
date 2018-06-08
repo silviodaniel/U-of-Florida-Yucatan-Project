@@ -109,18 +109,16 @@ loc.placeholder$loc.coords <- loc.coords[1:length(loc.placeholder$LOCALIDAD),]
 #NOW, REPLACE ALL VALUES IN ADDRESSES2_HITS WITHOUT COORDS
 #Municipios start at 2748 and go until 3290
 #Localities start at 1375 and go until 2747
-addresses2_hits[3290,]
+# addresses2_hits[3290,]
 
 addresses2_hits$LAT_HITS[2748:3290] <- mun.coords$Y
 addresses2_hits$LNG_HITS[2748:3290] <- mun.coords$X
-
 addresses2_hits$LAT_HITS[1375:2747] <- loc.coords$Y
 addresses2_hits$LNG_HITS[1375:2747] <- loc.coords$X
-
 addresses2_hits$LAT_HITS[1] <- 20.9491951
 addresses2_hits$LNG_HITS[1] <- -89.66059559999999
 
-
+write.table(addresses2_hits,"addresses.txt",sep="\t",row.names = F)
 ###NOTES
 
 ##Example 
