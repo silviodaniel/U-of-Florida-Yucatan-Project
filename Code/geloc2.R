@@ -11,6 +11,7 @@ mapdir2="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
 urbana2 <- st_read("Shapefiles/INEGI mapa/localidad250_a.shp",quiet=T,stringsAsFactors = F)
 urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
 urbana2 <- st_transform(urbana2,crs=4326)##Converting coordinates from NAD83 to WGS84
+
 ####cHANGING LOCALITIES, RENAMING SOME, REMOVING OTHERS THAT ARE DUPLICATES
 urbana2$nombre[162] <- "CHOLUL MERIDA"
 urbana2$nombre[1] <- "TEMOZON ABALA"
@@ -18,17 +19,18 @@ urbana2 <- urbana2[-c(43,61,102,153,242,295),]
 rural<-st_read(paste0(rootdir1,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
 rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
 rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
-municipios<- read.csv("catalogo de municipios_mod.csv",header=T,stringsAsFactors = F);View(municipios)
+municipios<- read.csv("catalogo de municipios_mod.csv",header=T,stringsAsFactors = F)#;View(municipios)
 municipios$Nombre.del.Municipio <- toupper(municipios$Nombre.del.Municipio)
 #####
 
 municipios2 <- municipios
 colnames(municipios2)[3] <- c("CVE_MUN")
 rural<- left_join(rural,municipios2[3:4])
-View(rural)
+#View(rural)
 
+addresses2_hits <- addresses2_hits[order(addresses2_hits[,5]),] ; View(addresses2_hits)
 ageb <- c()
-mun <- subset(addresses2_hits,(grepl("municipality matches!",addresses2_hits$HITS)))
+mun <- subset(addresses2_hits,(grepl("municipality matches!",addresses2_hits$LAT_HITS)))
 mun<- mun$MUNICIPIO
 for (i in mun) {#randomly creating various AGEB's to add to df
   tmp <- rural$CVE_AGEB[rural$Nombre.del.Municipio == i]#whichever ageb's equal that iteration name
@@ -80,10 +82,9 @@ placeholder$mun.coords <- mun.coords[1:length(placeholder$Nombre.del.Municipio),
 
 ####Now, for localities####
 
-loc.placeholder <- subset(addresses2_hits,(grepl("locality matches!",addresses2_hits$HITS)))
-# length(loc.placeholder$LOCALIDAD)#good, 998 hits
+loc.placeholder <- subset(addresses2_hits,(grepl("locality matches!",addresses2_hits$LAT_HITS)))
 urbana2_subset <- data.frame(LOCALIDAD = urbana2$nombre,geometry = urbana2$geometry)
-loc.placeholder <- left_join(loc.placeholder,urbana2_subset)#good, 998 hits now
+loc.placeholder <- left_join(loc.placeholder,urbana2_subset)#good, 1373 hits now
 
 target=1
 n <- 0
@@ -103,6 +104,22 @@ for (i in seq(loc.placeholder$LOCALIDAD)){#
 loc.coords <- st_coordinates(loc.coord.vector[1:length(loc.placeholder$LOCALIDAD)]);View(loc.coords)
 loc.coords <- as.data.frame(loc.coords)
 loc.placeholder$loc.coords <- loc.coords[1:length(loc.placeholder$LOCALIDAD),]
+
+##################################################################
+#NOW, REPLACE ALL VALUES IN ADDRESSES2_HITS WITHOUT COORDS
+#Municipios start at 2748 and go until 3290
+#Localities start at 1375 and go until 2747
+addresses2_hits[3290,]
+
+addresses2_hits$LAT_HITS[2748:3290] <- mun.coords$Y
+addresses2_hits$LNG_HITS[2748:3290] <- mun.coords$X
+
+addresses2_hits$LAT_HITS[1375:2747] <- loc.coords$Y
+addresses2_hits$LNG_HITS[1375:2747] <- loc.coords$X
+
+addresses2_hits$LAT_HITS[1] <- 20.9491951
+addresses2_hits$LNG_HITS[1] <- -89.66059559999999
+
 
 ###NOTES
 

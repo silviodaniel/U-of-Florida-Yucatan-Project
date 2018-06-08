@@ -14,8 +14,8 @@ mapdir2="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
 # mapdir5="ArcGIS Explorer/My Basemaps/eleccion_2010/eleccion_2010/todo/yuc/cartografiadigital_ife/"
 
 #Ben's code below 
-loc <- read.csv("catalogo de municipios.csv");head(loc)
-colnames(loc) <- c("CVE_ENT", "NAME_ENT", "CVE_MUN", "NAME_MUN")
+# loc <- read.csv("catalogo de municipios.csv");head(loc)
+# colnames(loc) <- c("CVE_ENT", "NAME_ENT", "CVE_MUN", "NAME_MUN")
 # rural<-st_read( "C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/yuc_ageb_rural.shp",quiet=T,stringsAsFactors = F)#Encuesta intercensal
 # urbana<- st_read(paste0(rootdir,mapdir1,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
 # encuesta<-read.csv(paste0(rootdir,mapdir1,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
@@ -26,12 +26,12 @@ colnames(loc) <- c("CVE_ENT", "NAME_ENT", "CVE_MUN", "NAME_MUN")
 # 611 unique localities
 
 #head(rural)
-tmp <- left_join(rural, loc)
-head(tmp)
-?left_join.sf
-
-tmp1 <- rural$geometry[1]
-# tmp1
+# tmp <- left_join(rural, loc)
+# head(tmp)
+# ?left_join.sf
+# 
+# tmp1 <- rural$geometry[1]
+# # tmp1
 # ?`cartography-package`
 # getBorders(tmp1)
 
@@ -43,7 +43,7 @@ rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
 urbana2 <- st_read("Shapefiles/INEGI mapa/localidad250_a.shp",quiet=T,stringsAsFactors = F)
 urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
 urbana2 <- st_transform(urbana2,crs=4326)##Converting coordinates from NAD83 to WGS84
-municipios<- read.csv("catalogo de municipios_mod.csv",header=T,stringsAsFactors = F);View(municipios)
+municipios<- read.csv("catalogo de municipios_mod.csv",header=T,stringsAsFactors = F)#;View(municipios)
 municipios$Nombre.del.Municipio <- toupper(municipios$Nombre.del.Municipio)
 
 #INEGI mapa
@@ -166,16 +166,18 @@ urbana2_hits <- (which(!is.na(urbana2_hits)))
 ####
 addresses2_hits <-read.csv("Linux Data/addresses2_mod2_hits.csv",header=T,stringsAsFactors = F)#;View(addresses2_hits)
 
-for (i in seq(length(addresses2_hits$HITS))){
-  if ((i %in% urbana2_hits && grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
-    addresses2_hits$HITS[i] <- "locality matches!" #phrase: "locality matches!"
+for (i in seq(length(addresses2_hits$LAT_HITS))){
+  if ((i %in% urbana2_hits && grepl("ZERO_RESULTS",addresses2_hits$LAT_HITS[i]))==T){
+    addresses2_hits$LAT_HITS[i] <- "locality matches!" #phrase: "locality matches!"
+    addresses2_hits$LNG_HITS[i] <- "locality matches!" #phrase: "locality matches!"
   }
 }
 
 ##TO COUNT HOW MANY additional SCHOOL HITS for municipalities (just those left over)
-for (i in seq(length(addresses2_hits$HITS))){
-  if ((grepl("ZERO_RESULTS",addresses2_hits$HITS[i]))==T){
-    addresses2_hits$HITS[i] <- "municipality matches!" #phrase: "municipality matches!"
+for (i in seq(length(addresses2_hits$LAT_HITS))){
+  if ((grepl("ZERO_RESULTS",addresses2_hits$LAT_HITS[i]))==T){
+    addresses2_hits$LAT_HITS[i] <- "municipality matches!" #phrase: "municipality matches!"
+    addresses2_hits$LNG_HITS[i] <- "municipality matches!" #phrase: "municipality matches!"
   }
 }
 
@@ -198,8 +200,11 @@ View(addresses2_hits)
 # }
 # add_school_hits(urbana2_hits,"locality matches")
 
-length(which(addresses2_hits$HITS=="locality matches!"))#989 additional hits (versus 998 before)! (urbana2)
-length(which(addresses2_hits$HITS=="locality matches!"))#951 add hits! (urbana4)
+length(which(addresses2_hits$LAT_HITS=="locality matches!"))#1373 additional hits (versus 998 before)! (urbana2)
+length(which(addresses2_hits$LAT_HITS=="municipality matches!"))#543 add hits! ()
+length(addresses2_hits$LAT_HITS)-1373-543#1374
+
+# length(which(addresses2_hits$HITS=="locality matches!"))#951 add hits! (urbana4)
 
 which(!is.na(missing_urbana2))
 unique(missing_urbana2)#count unique localities
