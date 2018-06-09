@@ -1,6 +1,7 @@
 rm(list=ls())
 library(cartography)
 rootdir="C:/Users/Silvio/Documents/GitHub/"
+rootdir1="C:/Users/Silvio/Documents/"
 rootdir2="C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/"
 mapdir1="U-of-Florida-Yucatan-Project/Shapefiles/"
 mapdir3="ArcGIS Explorer/My Basemaps/MEX_adm/"
@@ -12,8 +13,8 @@ library(cluster)
 library(dplyr)
 
 #reading files necessary
-py=read.table(paste0(rootdir,"R/Yucatan-Project/pop-yucatan/population-yucatan.txt"),header = T)
-ly<-read.table(paste0(rootdir,"R/Yucatan-Project/pop-yucatan/locations-yucatan.txt"),header=T)
+py=read.table(paste0(rootdir1,"R/Yucatan-Project/pop-yucatan/population-yucatan.txt"),header = T)
+ly<-read.table(paste0(rootdir1,"R/Yucatan-Project/pop-yucatan/locations-yucatan.txt"),header=T)
 ly$hid=ly$id
 ly$workid=ly$id
 py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
@@ -21,11 +22,21 @@ py=left_join(py,ly[,c("workid","x","y")],by="workid")
 colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
 head(py)
 ##
-urbana<- st_read(paste0(rootdir2,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
-rural<-st_read(paste0(rootdir2,mapdir2,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
+# urbana<- st_read(paste0(rootdir2,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
+# rural<-st_read(paste0(rootdir2,mapdir2,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
 encuesta<-read.csv(paste0(rootdir,mapdir2,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
                    header=T)
-length(unique(urbana$CVE_LOC))#only 20 unique localities
+
+urbana2 <- st_read("Shapefiles/INEGI mapa/localidad250_a.shp",quiet=T,stringsAsFactors = F)
+urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
+urbana2 <- st_transform(urbana2,crs=4326)##Converting coordinates from NAD83 to WGS84
+urbana2$nombre[162] <- "CHOLUL MERIDA"; urbana2$nombre[1] <- "TEMOZON ABALA"
+urbana2 <- urbana2[-c(43,61,102,153,242,295),]
+rural<-st_read(paste0(rootdir1,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
+rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
+rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
+
+# length(unique(urbana$CVE_LOC))#only 20 unique localities
 # View(encuesta)
 # View(urbana)
 # head(urbana)
@@ -53,27 +64,22 @@ plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
 # plot(st_geometry(mex2),add=T,col="#99FF99")
 # plot(st_geometry(mex2.1),add=T,col="#99FF99")
 plot(st_geometry(rural),add=T,col="#99FF99")
+plot(st_geometry(urbana2),add=T,col="white")
 #are rural and urbana municipalities of different codes??
 # plot(mex2$geometry[88],add=T,col="yellow")#Teya mun
 # plot(mex2$geometry[46],add=T,col="yellow")#Merida mun
 
-plot(rural$geometry[198],add=T,col="yellow")#Teya mun for rural
-plot(rural$geometry[235:239],add=T,col="yellow")#Merida mun for rural
-plot(st_geometry(urbana2),add=T,col="red")
-plot(urbana2$geometry[236],add=T,col="blue")#Teya 
-plot(urbana2$geometry[162],add=T,col="blue")#Cholul urban 
+# plot(rural$geometry[198],add=T,col="yellow")#Teya mun for rural
+# plot(rural$geometry[235:239],add=T,col="yellow")#Merida mun for rural
+# plot(urbana2$geometry[236],add=T,col="blue")#Teya 
+# plot(urbana2$geometry[162],add=T,col="blue")#Cholul urban 
 #only issue is municipalities with rural will not include the urban areas (red areas) enclosed 
 #within them
 #those are like holes, so when we random sample coordinates for those ~200 schools using 
 #municipality shp files, it will not include the urban areas (red areas)
 
-plot(rural$geometry[198],add=T,col="yellow")#Teya mun 
-plot(urbana2$geometry[14],add=T,col="blue")#Cholul rural
-
-
-
-
-
+# plot(rural$geometry[198],add=T,col="yellow")#Teya mun 
+# plot(urbana2$geometry[14],add=T,col="blue")#Cholul rural
 # plot(st_as_sf(urbana)["CVE_LOC"])
 #plot(st_as_sf(rural)[""])
 #Map 2
@@ -95,11 +101,8 @@ grid()
 abline(h=seq(19,22,0.1))
 abline(v=seq(-91,-87,0.1))
 
-#Next steps: create heat map of distance children traveling to school by locality
-#pair localiites with distance, color them darker gradient depending on value
-
 #Just add below code to above plot of Yuc (empty green area, mex0 and mex1)
-
+#####py data#####
 students=py[py$age>4 & py$age<18,]
 points(students$x1,students$y1,pch='.',col='red')
 #
@@ -108,9 +111,12 @@ points(schools$x,schools$y,pch='.',col='blue')
 #
 head(students)
 length(students$pid)
+length(schools$x)#3402 schools!!
+##################
+points
 
 
-###
+########################################################################################
 #Plot one polygon
 plot(urbana$geometry[1])
 plot(rural$geometry[1])
@@ -229,7 +235,7 @@ plot(spdf, add=TRUE, col=spdf$MatchID)
 
   
 #=======
-rm(list=ls())
+# rm(list=ls())
 library(cartography)
 
 #rootdir = "C:/Users/Silvio/Documents/"
@@ -243,36 +249,37 @@ mapdir  = paste0(rootdir, "../")
 #library(dplyr)
 
 #reading files necessary
-py=read.table(file="../population-yucatan.txt",header = T)
-ly<-read.table(file="../locations-yucatan.txt",header=TRUE)
-ly$hid=ly$id
-ly$workid=ly$id
-py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
-py=left_join(py,ly[,c("workid","x","y")],by="workid")
-colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
-head(py)
-##
-# urbana <- st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/yuc_ageb_urbana.shp"
-#                , quiet = TRUE)#encuesta intercensal
-# rural<- st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/yuc_ageb_rural.shp"
-#                 , quiet = TRUE)#Encuesta intercensal
-mex0=st_read(paste0(rootdir, mapdir, "MEX_adm0.shp"), quiet=T)#Diva-GIS
-mex1=st_read(paste0(rootdir, mapdir, "MEX_adm1.shp"), quiet=T)#Diva-GIS
+# py=read.table(file="../population-yucatan.txt",header = T)
+# ly<-read.table(file="../locations-yucatan.txt",header=TRUE)
+# ly$hid=ly$id
+# ly$workid=ly$id
+# py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
+# py=left_join(py,ly[,c("workid","x","y")],by="workid")
+# colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
+# head(py)
+# ##
+# # urbana <- st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/yuc_ageb_urbana.shp"
+# #                , quiet = TRUE)#encuesta intercensal
+# # rural<- st_read("C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/yuc_ageb_rural.shp"
+# #                 , quiet = TRUE)#Encuesta intercensal
+# mex0=st_read(paste0(rootdir, mapdir, "MEX_adm0.shp"), quiet=T)#Diva-GIS
+# mex1=st_read(paste0(rootdir, mapdir, "MEX_adm1.shp"), quiet=T)#Diva-GIS
 
 # class(urbana)
 # plot(st_geometry(urbana))#from encuesta file
 
-##
-#Map of Yucatan
-
-png("catchment_map.png", width=2400, height=1600, res=240)
+####################################################################################
+#Catchment Area Map of Yucatan
+png("Pictures/catch_newshp_newschools.png", width=2400, height=1600, res=240)
 #pdf("catchment_map.pdf", width=12, height=8)
 
 par(mar=c(2.1,2.1,2.1,2.1))#margins
 plot(st_geometry(mex0))#plots all of Mexico
 plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
      col="gray")#takes all Mexico plot, plot just Yucatan
-plot(st_geometry(mex1[31,]),add=T,col="#99FF99")#adds green color to 
+plot(st_geometry(rural),add=T,col="#99FF99")
+plot(st_geometry(urbana2),add=T,col="white")
+# plot(st_geometry(mex1[31,]),add=T,col="#99FF99")#adds green color to 
 #Yucatan boundary
 
 # plot(st_geometry(rural),lwd=.5,add=T,col="#FFFFFF")
@@ -280,26 +287,23 @@ plot(st_geometry(mex1[31,]),add=T,col="#99FF99")#adds green color to
 # plot(st_geometry(urbana),lwd=.5,add=T,col=4)
 # plot(st_geometry(urbana),lwd=.5,add=T,col="#FF8C00")
 
-axis(1)#adds in long and lat axes
-axis(2)
-grid()
-abline(h=seq(19,22,0.1))
-abline(v=seq(-91,-87,0.1))
-
-#Next steps: create heat map of distance children traveling to school by locality
-#pair localiites with distance, color them darker gradient depending on value
-
-#Just add below code to above plot of Yuc (empty green area, mex0 and mex1)
+##GRID##
+# axis(1)#adds in long and lat axes
+# axis(2)
+# grid()
+# abline(h=seq(19,22,0.1))
+# abline(v=seq(-91,-87,0.1))
 
 students=py[py$age>4 & py$age<18,]
 points(students$x1,students$y1,pch='.',col='red')
-#
-schools = ly[ly$type=='school',]
-points(schools$x,schools$y,pch='.',col='blue')
-#
-head(students)
-length(students$pid)
-length(schools$pid)
+#########ly data#####################################
+# schools = ly[ly$type=='school',]
+# points(schools$x,schools$y,pch='.',col='blue')
+#OR....
+################
+schools2_x <- as.numeric(addresses2_hits$LAT_HITS)
+schools2_y <- as.numeric(addresses2_hits$LNG_HITS)
+points(schools2_y,schools2_x,pch= '.', col='blue')#Reversed by accident!
 
 #Haversine function manipulation to plot circles correctly
 earth_r = 6371
