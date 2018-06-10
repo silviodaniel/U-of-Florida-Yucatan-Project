@@ -1,17 +1,21 @@
-setwd("C:/Users/Silvio/Documents/R/Yucatan-Project/Pictures")
+rootdir="C:/Users/Silvio/Documents/GitHub/U-of-Florida-Yucatan-Project/"
+setwd(paste0(rootdir,"Data/pop-yucatan/"))
+# setwd("C:/Users/Silvio/Documents/R/Yucatan-Project/Pictures")
 # install.packages("cluster")
 library(cluster)
 # install.packages("dplyr")
 library(dplyr)
 #py<-read.table(file="C:/Users/Silvio/Documents/R/Yucatan-Project/pop-yucatan/population-yucatan.txt",header=TRUE)
 # py=read.table(file="pop-yucatan/population-yucatan_old.txt",header = T)
-py=read.table(file="pop-yucatan/population-yucatan.txt",header = T)
-ly<-read.table(file="pop-yucatan/locations-yucatan.txt",header=TRUE)
+py=read.table(file="population-yucatan.txt",header = T)
+ly<-read.table(file="locations-yucatan.txt",header=TRUE)
 ly$hid=ly$id
 ly$workid=ly$id
 py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
 py=left_join(py,ly[,c("workid","x","y")],by="workid")
 colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
+#x1 and y1 refer to the home coordinates, and x2 y2 refer to the work or school
+# py1<-py
 head(py)
 
 # ly$Urban=x#Create urban/rural column
