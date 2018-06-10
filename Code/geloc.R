@@ -255,58 +255,58 @@ which(!is.na(missing_urbana2))
 unique(missing_urbana2)#count unique localities
 length(unique(missing_urbana2))/length(unique(addresses2$LOCALIDAD))#43% missing localities! 254/587
 #587 unique localities in total, so we have 254 or about 57% of them
-length(unique(missing_urbana4))/length(unique(addresses2$LOCALIDAD))#46% missing localities! 268/587
+# length(unique(missing_urbana4))/length(unique(addresses2$LOCALIDAD))#46% missing localities! 268/587
 
-missing_urbana2[2065:2095]
+# missing_urbana2[2065:2095]
 ###################################################################
 ####PLOTTING POLYGONS
 #Plot one polygon
-plot(urbana2$geometry[1])
-plot(rural$geometry[1])
-points(spsample(urbana2$geometry[1],n=10,"regular"),pch=3)
+# plot(urbana2$geometry[1])
+# plot(rural$geometry[1])
+# points(spsample(urbana2$geometry[1],n=10,"regular"),pch=3)
 
 #sf add randomly sampled cooordinates
-rand.coord=st_sample(urbana2$geometry[1],10,"random");rand.coord
-# sample(r.coo,)
-length(rand.coord)
-
-plot(st_geometry(urbana2$geometry[1]))
-plot(st_sample(urbana2$geometry[1],10,"random"),add=T, col='#88888888',pch=20)
+# rand.coord=st_sample(urbana2$geometry[1],10,"random");rand.coord
+# # sample(r.coo,)
+# length(rand.coord)
+# 
+# plot(st_geometry(urbana2$geometry[1]))
+# plot(st_sample(urbana2$geometry[1],10,"random"),add=T, col='#88888888',pch=20)
 
 ##cODE For getting right amount of sampling
 #For loop, nesting a while loop with target depending on the numb of schools needed
-target=10
-n <- 0
-# install.packages("lwgeom")
-library(lwgeom)
-
-for (i in seq()){
-  while(n <= target){
-    rand.coords<- st_sample(urbana2$geometry[1],target,"random")#+2*target
-    n <- length(rand.coords)
-    print(n)
-    if (n >= target){
-      portion <- sample(x = 1:n, target)
-      rand.coords <- rand.coords[portion]#sampling from random positions (13,10,12) in rand.coords
-      #from above to get exactly the target of 10
-    }
-  }
-}
-rand.coords
+# target=10
+# n <- 0
+# # install.packages("lwgeom")
+# library(lwgeom)
+# 
+# for (i in seq()){
+#   while(n <= target){
+#     rand.coords<- st_sample(urbana2$geometry[1],target,"random")#+2*target
+#     n <- length(rand.coords)
+#     print(n)
+#     if (n >= target){
+#       portion <- sample(x = 1:n, target)
+#       rand.coords <- rand.coords[portion]#sampling from random positions (13,10,12) in rand.coords
+#       #from above to get exactly the target of 10
+#     }
+#   }
+# }
+# rand.coords
 
 #df with objectid, nombre, schools needed
 
 #checking which multiple localities, repeats, 
-nombre=urbana2$nombre
-nombre.dummy=NULL
-nombre.repeats=NULL
-for (i in seq(urbana2$nombre)){
-  if (nombre[i] %in% nombre.dummy){
-    nombre.repeats<- append(nombre.repeats,(nombre[i]))
-  }
-  nombre.dummy[i]=nombre[i]
-  next
-}
+# nombre=urbana2$nombre
+# nombre.dummy=NULL
+# nombre.repeats=NULL
+# for (i in seq(urbana2$nombre)){
+#   if (nombre[i] %in% nombre.dummy){
+#     nombre.repeats<- append(nombre.repeats,(nombre[i]))
+#   }
+#   nombre.dummy[i]=nombre[i]
+#   next
+# }
 
 #Plotting localities and municipalities
 # plot(mex2$geometry[46])#plotting Merida, 46; Opichen in 55; tekax & tizimin, 79 & 96; Teya, 88; 
@@ -322,12 +322,12 @@ for (i in seq(urbana2$nombre)){
 # plot(urbana2$geometry[14])#,add=T,col="blue")
 
 ####cHANGING LOCALITIES, RENAMING SOME, REMOVING OTHERS THAT ARE DUPLICATES
-urbana2$nombre[162] <- "CHOLUL MERIDA"
-urbana2$nombre[1] <- "TEMOZON ABALA"
-urbana2 <- urbana2[-c(43,61,102,153,242,295),]
-
-plot(st_geometry(urbana2$geometry[153]),add=T, col = "red", lwd = 3)
-plot(st_geometry(urbana2$geometry[317]))
+# urbana2$nombre[162] <- "CHOLUL MERIDA"
+# urbana2$nombre[1] <- "TEMOZON ABALA"
+# urbana2 <- urbana2[-c(43,61,102,153,242,295),]
+# 
+# plot(st_geometry(urbana2$geometry[153]),add=T, col = "red", lwd = 3)
+# plot(st_geometry(urbana2$geometry[317]))
 #So now we have 342 unique localities and polygons!
 
 ##############################################

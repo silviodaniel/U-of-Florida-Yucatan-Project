@@ -11,7 +11,6 @@ mapdir2="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
 urbana2 <- st_read("Shapefiles/INEGI mapa/localidad250_a.shp",quiet=T,stringsAsFactors = F)
 urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
 urbana2 <- st_transform(urbana2,crs=4326)##Converting coordinates from NAD83 to WGS84
-
 ####cHANGING LOCALITIES, RENAMING SOME, REMOVING OTHERS THAT ARE DUPLICATES
 urbana2$nombre[162] <- "CHOLUL MERIDA"
 urbana2$nombre[1] <- "TEMOZON ABALA"
@@ -118,7 +117,9 @@ addresses2_hits$LNG_HITS[1375:2747] <- loc.coords$X
 addresses2_hits$LAT_HITS[1] <- 20.9491951
 addresses2_hits$LNG_HITS[1] <- -89.66059559999999
 
-write.table(addresses2_hits,"addresses.txt",sep="\t",row.names = F)
+schools2_x <- as.numeric(addresses2_hits$LAT_HITS)
+schools2_y <- as.numeric(addresses2_hits$LNG_HITS)
+# write.table(addresses2_hits,"addresses.txt",sep="\t",row.names = F)
 ###NOTES
 
 ##Example 

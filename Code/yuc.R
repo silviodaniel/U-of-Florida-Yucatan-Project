@@ -6,7 +6,7 @@ rootdir2="C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/"
 mapdir1="U-of-Florida-Yucatan-Project/Shapefiles/"
 mapdir3="ArcGIS Explorer/My Basemaps/MEX_adm/"
 mapdir2="encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/"
-setwd(paste0(rootdir,"GitHub/U-of-Florida-Yucatan-Project"))
+setwd(paste0(rootdir,"U-of-Florida-Yucatan-Project"))
 # install.packages("cluster")
 library(cluster)
 # install.packages("dplyr")
@@ -20,6 +20,9 @@ ly$workid=ly$id
 py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
 py=left_join(py,ly[,c("workid","x","y")],by="workid")
 colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
+students=py[py$age>4 & py$age<18,]
+schools = ly[ly$type=='school',]
+
 head(py)
 ##
 # urbana<- st_read(paste0(rootdir2,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
@@ -32,7 +35,7 @@ urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
 urbana2 <- st_transform(urbana2,crs=4326)##Converting coordinates from NAD83 to WGS84
 urbana2$nombre[162] <- "CHOLUL MERIDA"; urbana2$nombre[1] <- "TEMOZON ABALA"
 urbana2 <- urbana2[-c(43,61,102,153,242,295),]
-rural<-st_read(paste0(rootdir1,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
+rural<-st_read(paste0(rootdir,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
 rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
 rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
 
@@ -46,10 +49,10 @@ mex0=st_read(paste0(rootdir,mapdir1,"MEX_adm0.shp"),
              quiet=T)#Diva-GIS
 mex1=st_read(paste0(rootdir,mapdir1,"MEX_adm1.shp"),
              quiet=T)#Diva-GIS
-mex0 <- st_read(paste0(rootdir2,"gadm36_MEX_shp/gadm36_MEX_0.shp"),quiet=T,stringsAsFactors = F)
-mex1 <- st_read(paste0(rootdir2,"gadm36_MEX_shp/gadm36_MEX_1.shp"),quiet=T,stringsAsFactors = F)
-mex2.1 <- st_read(paste0(rootdir2,"gadm36_MEX_shp/gadm36_MEX_2.shp"),quiet=T,stringsAsFactors = F)
-mex2 <- subset(mex2.1, mex2.1$GID_1=="MEX.31_1")
+# mex0 <- st_read(paste0(rootdir2,"gadm36_MEX_shp/gadm36_MEX_0.shp"),quiet=T,stringsAsFactors = F)
+# mex1 <- st_read(paste0(rootdir2,"gadm36_MEX_shp/gadm36_MEX_1.shp"),quiet=T,stringsAsFactors = F)
+# mex2.1 <- st_read(paste0(rootdir2,"gadm36_MEX_shp/gadm36_MEX_2.shp"),quiet=T,stringsAsFactors = F)
+# mex2 <- subset(mex2.1, mex2.1$GID_1=="MEX.31_1")
 
 # class(urbana)
 # plot(st_geometry(urbana))#from encuesta file
@@ -57,6 +60,7 @@ mex2 <- subset(mex2.1, mex2.1$GID_1=="MEX.31_1")
 rural$CVE_AGEB
 ##
 #Map 1
+png("Pictures/py_students_schools_enlarged_schools.png", width=2400, height=1600, res=240)
 par(mar=c(2.1,2.1,2.1,2.1))#margins
 plot(st_geometry(mex0))#plots all of Mexico
 plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
@@ -65,6 +69,13 @@ plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
 # plot(st_geometry(mex2.1),add=T,col="#99FF99")
 plot(st_geometry(rural),add=T,col="#99FF99")
 plot(st_geometry(urbana2),add=T,col="white")
+
+points(students$x1,students$y1,pch='.',col='red')
+#
+# points(schools$x,schools$y,pch='.',col='blue')
+points(schools$x,schools$y,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
+# points(schools2_y,schools2_x,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
+dev.off()
 #are rural and urbana municipalities of different codes??
 # plot(mex2$geometry[88],add=T,col="yellow")#Teya mun
 # plot(mex2$geometry[46],add=T,col="yellow")#Merida mun
@@ -103,11 +114,7 @@ abline(v=seq(-91,-87,0.1))
 
 #Just add below code to above plot of Yuc (empty green area, mex0 and mex1)
 #####py data#####
-students=py[py$age>4 & py$age<18,]
-points(students$x1,students$y1,pch='.',col='red')
-#
-schools = ly[ly$type=='school',]
-points(schools$x,schools$y,pch='.',col='blue')
+
 #
 head(students)
 length(students$pid)
@@ -302,8 +309,8 @@ points(students$x1,students$y1,pch='.',col='red')
 # points(schools$x,schools$y,pch='.',col='blue')
 #OR....
 ################
-# schools2_x <- as.numeric(addresses2_hits$LAT_HITS)
-# schools2_y <- as.numeric(addresses2_hits$LNG_HITS)
+schools2_x <- as.numeric(addresses2_hits$LAT_HITS)
+schools2_y <- as.numeric(addresses2_hits$LNG_HITS)
 # points(schools2_y,schools2_x,pch= '.', col='blue')#Reversed by accident!
 points(schools2_y,schools2_x,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
 
