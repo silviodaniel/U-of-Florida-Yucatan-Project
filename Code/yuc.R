@@ -270,14 +270,15 @@ mapdir  = paste0(rootdir, "../")
 
 ####################################################################################
 #Catchment Area Map of Yucatan
-png("Pictures/catch_newshp_newschools.png", width=2400, height=1600, res=240)
+png("Pictures/newshps_newschools_white_large_schools.png", width=2400, height=1600, res=240)
 #pdf("catchment_map.pdf", width=12, height=8)
 
 par(mar=c(2.1,2.1,2.1,2.1))#margins
 plot(st_geometry(mex0))#plots all of Mexico
 plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
      col="gray")#takes all Mexico plot, plot just Yucatan
-plot(st_geometry(rural),add=T,col="#99FF99")
+plot(st_geometry(rural),add=T,col="white")
+#plot(st_geometry(rural),add=T,col="#99FF99")
 plot(st_geometry(urbana2),add=T,col="white")
 # plot(st_geometry(mex1[31,]),add=T,col="#99FF99")#adds green color to 
 #Yucatan boundary
@@ -294,16 +295,23 @@ plot(st_geometry(urbana2),add=T,col="white")
 # abline(h=seq(19,22,0.1))
 # abline(v=seq(-91,-87,0.1))
 
-students=py[py$age>4 & py$age<18,]
+# students=py[py$age>4 & py$age<18,]
 points(students$x1,students$y1,pch='.',col='red')
 #########ly data#####################################
 # schools = ly[ly$type=='school',]
 # points(schools$x,schools$y,pch='.',col='blue')
 #OR....
 ################
-schools2_x <- as.numeric(addresses2_hits$LAT_HITS)
-schools2_y <- as.numeric(addresses2_hits$LNG_HITS)
-points(schools2_y,schools2_x,pch= '.', col='blue')#Reversed by accident!
+# schools2_x <- as.numeric(addresses2_hits$LAT_HITS)
+# schools2_y <- as.numeric(addresses2_hits$LNG_HITS)
+# points(schools2_y,schools2_x,pch= '.', col='blue')#Reversed by accident!
+points(schools2_y,schools2_x,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
+
+#Plotting circles around all schools (new)
+for (coordinate in 1:length(schools2_x)){
+  plotCircle(schools2_y[coordinate],schools2_x[coordinate],10)#15 km radius of circle
+}
+######################
 
 #Haversine function manipulation to plot circles correctly
 earth_r = 6371
@@ -349,11 +357,13 @@ plotCircle_blue <- function(x_deg, y_deg, r) {
 }#This output is Cartesian not lat long, so have to fix this
 #must get lines to output the coordinates of x and y in lat/long degrees
 
-##Plotting circles around all schools!
-length(schools$x)
-for (coordinate in 1:length(schools$x)){
-  plotCircle(schools$x[coordinate],schools$y[coordinate],15)#15 km radius of circle
-}
+##Plotting circles around all schools (old)!
+# length(schools$x)
+# for (coordinate in 1:length(schools$x)){
+#   plotCircle(schools$x[coordinate],schools$y[coordinate],15)#15 km radius of circle
+# }
+
+
 
 # lines(c(-90,-89.8),c(19.5,19.7),col="blue")
 ###
