@@ -60,7 +60,7 @@ mex1=st_read(paste0(rootdir,mapdir1,"MEX_adm1.shp"),
 rural$CVE_AGEB
 ##
 #Map 1
-png("Pictures/py_students_schools_enlarged_schools.png", width=2400, height=1600, res=240)
+png("Pictures/newshps_newschools_green_enlarged_schools.png", width=2400, height=1600, res=240)
 par(mar=c(2.1,2.1,2.1,2.1))#margins
 plot(st_geometry(mex0))#plots all of Mexico
 plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
@@ -73,8 +73,8 @@ plot(st_geometry(urbana2),add=T,col="white")
 points(students$x1,students$y1,pch='.',col='red')
 #
 # points(schools$x,schools$y,pch='.',col='blue')
-points(schools$x,schools$y,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
-# points(schools2_y,schools2_x,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
+# points(schools$x,schools$y,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
+points(schools2_y,schools2_x,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
 dev.off()
 #are rural and urbana municipalities of different codes??
 # plot(mex2$geometry[88],add=T,col="yellow")#Teya mun
