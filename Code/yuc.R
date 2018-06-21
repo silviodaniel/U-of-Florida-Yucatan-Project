@@ -1,8 +1,13 @@
 ###This code is to create the maps of Yucatan, some data is based on other code you must run 
-#like geloc.R and geloc2.R (this is to get the updated data urbana2 for the new schools geolocated)
+#like geloc.R and geloc2.R (this is to get the updated data schools2_y and schools2_x
+#for the new schools geolocated)
 
 # rm(list=ls())
 library(cartography)
+# install.packages("cluster")
+library(cluster)
+# install.packages("dplyr")
+library(dplyr)
 rootdir="C:/Users/Silvio/Documents/GitHub/"
 rootdir1="C:/Users/Silvio/Documents/"
 rootdir2="C:/Users/Silvio/Documents/ArcGIS Explorer/My Basemaps/"
@@ -10,14 +15,23 @@ mapdir1="U-of-Florida-Yucatan-Project/Shapefiles/"
 mapdir3="ArcGIS Explorer/My Basemaps/MEX_adm/"
 mapdir2="encuesta_intercensal_2015 Diego/encuesta_intercensal_2015/shps/yuc/"
 setwd(paste0(rootdir,"U-of-Florida-Yucatan-Project"))
-# install.packages("cluster")
-library(cluster)
-# install.packages("dplyr")
-library(dplyr)
 
 #reading files necessary
-py=read.table(paste0(rootdir1,"R/Yucatan-Project/pop-yucatan/population-yucatan.txt"),header = T)
-ly<-read.table(paste0(rootdir1,"R/Yucatan-Project/pop-yucatan/locations-yucatan.txt"),header=T)
+###############################################
+#####Py old data##############
+# py<- read.table("Linux Data/pop-yucatan/population-yucatan.txt",header = T)
+# ly<-read.table("Linux Data/pop-yucatan/locations-yucatan.txt",header=T)
+# ly$hid=ly$id
+# ly$workid=ly$id
+# py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
+# py=left_join(py,ly[,c("workid","x","y")],by="workid")
+# colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
+# students=py[py$age>4 & py$age<18,]
+# schools = ly[ly$type=='school',]
+################################################
+#########Py new data########################
+py<- read.table("Linux Data/pop-yucatan/population-yucatan-silvio.txt",header = T)
+ly<-read.table("Linux Data/pop-yucatan/locations-yucatan-silvio.txt",header=T)
 ly$hid=ly$id
 ly$workid=ly$id
 py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
@@ -26,6 +40,8 @@ colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1",
 students=py[py$age>4 & py$age<18,]
 schools = ly[ly$type=='school',]
 
+
+########################################################
 # head(py)
 ##
 # urbana<- st_read(paste0(rootdir2,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
@@ -62,8 +78,9 @@ mex1=st_read(paste0(rootdir,mapdir1,"MEX_adm1.shp"),
 
 rural$CVE_AGEB
 ##
-#Map 1: This is set to run for the urbana2 file from other pieces of code, which is the 
-#geolocated new data set of schools (run geloc and geloc2 first)
+#Map 1: This is set to run for the schools2_y and schools2_x files 
+#from other pieces of code, which is the  geolocated new data set of schools 
+#(run geloc and geloc2 first)
 # png("Pictures/newshps_newschools_green_enlarged_schools.png", width=2400, height=1600, res=240)
 par(mar=c(2.1,2.1,2.1,2.1))#margins
 plot(st_geometry(mex0))#plots all of Mexico
@@ -76,7 +93,7 @@ plot(st_geometry(urbana2),add=T,col="white")
 
 points(students$x1,students$y1,pch='.',col='red')
 #
-# points(schools$x,schools$y,pch='.',col='blue')
+points(schools$x,schools$y,pch='.',col='blue')
 # points(schools$x,schools$y,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
 points(schools2_y,schools2_x,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
 dev.off()
