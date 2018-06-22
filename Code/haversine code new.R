@@ -1,5 +1,5 @@
 rootdir="C:/Users/Silvio/Documents/GitHub/U-of-Florida-Yucatan-Project/"
-setwd(paste0(rootdir,"Data/pop-yucatan/"))
+setwd(paste0(rootdir,"Linux Data/pop-yucatan/"))
 # setwd("C:/Users/Silvio/Documents/R/Yucatan-Project/Pictures")
 # install.packages("cluster")
 library(cluster)
@@ -7,8 +7,10 @@ library(cluster)
 library(dplyr)
 #py<-read.table(file="C:/Users/Silvio/Documents/R/Yucatan-Project/pop-yucatan/population-yucatan.txt",header=TRUE)
 # py=read.table(file="pop-yucatan/population-yucatan_old.txt",header = T)
-py=read.table(file="population-yucatan.txt",header = T)
-ly<-read.table(file="locations-yucatan.txt",header=TRUE)
+# py<- read.table(file="population-yucatan.txt",header = T)
+# ly<-read.table(file="locations-yucatan.txt",header=TRUE)
+py<- read.table("population-yucatan-silvio.txt",header = T)
+ly<-read.table("locations-yucatan-silvio.txt",header=T)
 ly$hid=ly$id
 ly$workid=ly$id
 py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
@@ -32,24 +34,9 @@ hav=function(x1,y1,x2,y2){
 }
 12742/2
 
-hav(-90,20,-89,20)
-hav(-90,20,-90,21)
-
-hav(-90,0,-90,1)
-hav(-90,0,-89,0)
-
-hav(-90,89,-90,90)#latitude changing
-hav(-90,90,-89,90)#long
-
-hav(0,20,)
-
-
 hav(-89.6848792716 ,20.6464119922,-89.0323486633, 20.8012998636)#=70.01462
-# hav(-89.12265, 21.23725, -89.55344, 20.92981)
-# hav(py[1:10,8:11],3,4,5)
-py[1:10,8:11]
 
-#Creating distance column with haversine
+####Creating distance column with haversine
 start = Sys.time()
 hav_vec=hav(py[,8],py[,9],py[,10],py[,11])##ANOTHER FAST WAY TO CALCULATE
 py$distance=hav_vec
@@ -94,19 +81,23 @@ hist(movement_by_type$distance[movement_by_type$type=='school'],xlab="Distance T
 mean(movement_by_type$distance[movement_by_type$type=='house'])
 mean(movement_by_type$distance[movement_by_type$type=='school'])#
 #reproduced old mean of 45.7km
-#7.88 km new data, normal pi value
+#7.88 km old data, normal pi value
+#8.21 km new data
 
 mean(movement_by_type$distance[movement_by_type$type=='work'])#
 #reproduced old mean of 34.4 km
-#13.9 km new data
+#13.9 km old data
+#13.86 new data
 # table(movement_by_type$distance[movement_by_type$type=='house'])
 # table(movement_by_type$distance[movement_by_type$type=='work'])
 median(movement_by_type$distance[movement_by_type$type=='school'])#
 #reproduced old median of 46.0km
-#.705km new data
+#.705km old data
+#0.682 NEW DATA
 median(movement_by_type$distance[movement_by_type$type=='work'])#
 #Reproduced old median of 11.06km
-#2.78 km new data
+#2.78 km old data
+#2.74 km new data
 hist(movement_by_log$logdist[movement_by_log$type=='school'],
      xlab="Distance Traveled (log(km))", 
      main="Average Daily School Transit in Yucatan")

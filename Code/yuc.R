@@ -46,8 +46,8 @@ schools = ly[ly$type=='school',]
 ##
 # urbana<- st_read(paste0(rootdir2,mapdir2,"yuc_ageb_urbana.shp"),quiet=T)#encuesta intercensal
 # rural<-st_read(paste0(rootdir2,mapdir2,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
-encuesta<-read.csv(paste0(rootdir,mapdir2,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
-                   header=T)
+# encuesta<-read.csv(paste0(rootdir,mapdir2,"catalogos/localidades urbanas y rurales amanzanadas.csv"),
+                   # header=T)
 
 urbana2 <- st_read("Shapefiles/INEGI mapa/localidad250_a.shp",quiet=T,stringsAsFactors = F)
 urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
@@ -76,12 +76,12 @@ mex1=st_read(paste0(rootdir,mapdir1,"MEX_adm1.shp"),
 # class(urbana)
 # plot(st_geometry(urbana))#from encuesta file
 
-rural$CVE_AGEB
+# rural$CVE_AGEB
 ##
 #Map 1: This is set to run for the schools2_y and schools2_x files 
 #from other pieces of code, which is the  geolocated new data set of schools 
 #(run geloc and geloc2 first)
-# png("Pictures/newshps_newschools_green_enlarged_schools.png", width=2400, height=1600, res=240)
+png("Pictures/newshps_newschools_green_enlarged_schools2.png", width=2400, height=1600, res=240)
 par(mar=c(2.1,2.1,2.1,2.1))#margins
 plot(st_geometry(mex0))#plots all of Mexico
 plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
@@ -94,7 +94,7 @@ plot(st_geometry(urbana2),add=T,col="white")
 points(students$x1,students$y1,pch='.',col='red')
 #
 points(schools$x,schools$y,pch='.',col='blue')
-# points(schools$x,schools$y,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
+points(schools$x,schools$y,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
 points(schools2_y,schools2_x,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
 dev.off()
 #are rural and urbana municipalities of different codes??
@@ -150,9 +150,7 @@ plotCircle_blue <- function(x_deg, y_deg, r) {
   lats = c(halflats, rev(halflats))
   lons = c(westlons, rev(eastlons))
   lines(rad2deg(lons), rad2deg(lats),col="blue")
-  
-  
-  #angles <- seq(0,2*pi,length.out=360)#between 0 and 2pi
+    #angles <- seq(0,2*pi,length.out=360)#between 0 and 2pi
   #lines(r*cos(angles)+x,r*sin(angles)+y)#start at x and y and add
 }#This output is Cartesian not lat long, so have to fix this
 #must get lines to output the coordinates of x and y in lat/long degrees
@@ -174,7 +172,9 @@ abline(v=seq(-91,-87,0.1))
 #####py data#####
 points(students$x1,students$y1,pch='.',col='red')
 #########ly data#####################################
+# points(schools$x,schools$y,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
 points(schools$x,schools$y,pch='.',col='blue')
+
 #Plotting circles around all schools (old)!
 length(schools$x)
 for (coordinate in 1:length(schools$x)){
@@ -338,7 +338,7 @@ gcd=function(x1,y1,x2,y2){
   #convert degrees to radians by multiplying by pi, dividing by 180
   #y's should be latitudes and x's should be longitudes
   return(2 * earth_r *asin(sqrt((sin(pi*(y2-y1)/(2*180)))^2
-                          +cos(pi*y1/180)*cos(pi*y2/180)*(sin(pi*(x2-x1)/(2*180)))^2)))
+                                +cos(pi*y1/180)*cos(pi*y2/180)*(sin(pi*(x2-x1)/(2*180)))^2)))
 }
 
 
@@ -451,8 +451,3 @@ dev.off()
 #   match.ID=TRUE)
 # 
 # ## Merging together the list to make a SpatialDataFrame
-# spdf <- do.call("rbind", spdf)
-# 
-# ## Plot 
-# plot(Poly[,])
-# plot(spdf, add=TRUE, col=spdf$MatchID)
