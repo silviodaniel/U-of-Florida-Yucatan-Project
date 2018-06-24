@@ -98,58 +98,65 @@ median(movement_by_type$distance[movement_by_type$type=='work'])#
 #Reproduced old median of 11.06km
 #2.78 km old data
 #2.74 km new data
-hist(movement_by_log$logdist[movement_by_log$type=='school'],
-     xlab="Distance Traveled (log(km))", 
-     main="Average Daily School Transit in Yucatan")
+students=py[py$age>4 & py$age<18,]
+schools = ly[ly$type=='school',]
+outliers= students[c(407612,408036,408340,408518),]#students >250 km
+length(which(students$distance>50))
+outliers2= subset(students,students$distance>50);View(outliers2)
+length(students$pid)
 
-set.seed(12345)
-x=rnorm(1000)
-hist.data=hist(x,plot=F)
+# hist(movement_by_log$logdist[movement_by_log$type=='school'],
+#      xlab="Distance Traveled (log(km))", 
+#      main="Average Daily School Transit in Yucatan")
 
-hist.data$counts=log10(hist.data$counts)
-dev.new(width=4, height=4)
-hist(x)
-dev.new(width=4, height=4)
-plot(hist.data, ylab='log10(Frequency)')
-hist(x)
-
-plot(density(movement_by_log$logdist[movement_by_log$type=='work'], log="y"), main="Histogram of Distance to Work")
-
-#Testing Log transform histogram
-count=table(round(rnorm(10000)*2))#data
-head(count)
-#plot
-plot(log(count),type="h",yaxt="n", xlab="log(count)", ylab="position")
-# axis labels
-yAxis = c(0,1,10,100,1000)
-# draw axis labels
-axis(2, at=log(yAxis),labels=yAxis, las=2)
-
-plot(movement_by_log$logdist[movement_by_log$type=='work']$count, log="y",type='h',lwd=10,lend=2)
-
-############
-#Number of schools, workplaces
-head(ly[,2])
-homes=which(ly[,2]=="house")#from ly, so unique
-length(homes)#376400
-school=which(ly[,2]=="school")
-work=which(ly[,2]=="work")
-length(school)#3402 schools
-length(work)#95560 workplaces
-length(school)+length(work)#98962
-#Number of children going to school supposedly, or # students enrolled in schools
-#use movement by type, which has repeated workplaces,and can show ALL people going to a work
-school_children=which(movement_by_type[,4]=="school")
-workers=which(movement_by_type[,4]=="work")
-homestayers=which(movement_by_type[,4]=="house")
-length(school_children)#43574 
-length(workers)#1155064
-length(homestayers)#620859
-
-#Descriptive stuff
-max(movement_by_type$distance)#max distance travelled is 37.7 km
-
-#NOtes#################################################################
-#where houses end in location : position 376400
-
-length(students)
+# set.seed(12345)
+# x=rnorm(1000)
+# hist.data=hist(x,plot=F)
+# 
+# hist.data$counts=log10(hist.data$counts)
+# dev.new(width=4, height=4)
+# hist(x)
+# dev.new(width=4, height=4)
+# plot(hist.data, ylab='log10(Frequency)')
+# hist(x)
+# 
+# plot(density(movement_by_log$logdist[movement_by_log$type=='work'], log="y"), main="Histogram of Distance to Work")
+# 
+# #Testing Log transform histogram
+# count=table(round(rnorm(10000)*2))#data
+# head(count)
+# #plot
+# plot(log(count),type="h",yaxt="n", xlab="log(count)", ylab="position")
+# # axis labels
+# yAxis = c(0,1,10,100,1000)
+# # draw axis labels
+# axis(2, at=log(yAxis),labels=yAxis, las=2)
+# 
+# plot(movement_by_log$logdist[movement_by_log$type=='work']$count, log="y",type='h',lwd=10,lend=2)
+# 
+# ############
+# #Number of schools, workplaces
+# head(ly[,2])
+# homes=which(ly[,2]=="house")#from ly, so unique
+# length(homes)#376400
+# school=which(ly[,2]=="school")
+# work=which(ly[,2]=="work")
+# length(school)#3402 schools
+# length(work)#95560 workplaces
+# length(school)+length(work)#98962
+# #Number of children going to school supposedly, or # students enrolled in schools
+# #use movement by type, which has repeated workplaces,and can show ALL people going to a work
+# school_children=which(movement_by_type[,4]=="school")
+# workers=which(movement_by_type[,4]=="work")
+# homestayers=which(movement_by_type[,4]=="house")
+# length(school_children)#43574 
+# length(workers)#1155064
+# length(homestayers)#620859
+# 
+# #Descriptive stuff
+# max(movement_by_type$distance)#max distance travelled is 37.7 km
+# 
+# #NOtes#################################################################
+# #where houses end in location : position 376400
+# 
+# length(students)

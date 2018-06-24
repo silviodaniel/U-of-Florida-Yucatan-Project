@@ -40,6 +40,7 @@ mapdir2="ArcGIS Explorer/My Basemaps/INEGI mapa/conjunto_de_datos/"
 rural<-st_read(paste0(rootdir1,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
 rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
 rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
+rural <- rural[-c(277:299,301:329),]#fixing the Progreso issue with including shapes from islands
 urbana2 <- st_read("Shapefiles/INEGI mapa/localidad250_a.shp",quiet=T,stringsAsFactors = F)
 urbana2$nombre<- iconv(urbana2$nombre,from="UTF-8",to="ASCII//TRANSLIT")
 urbana2 <- st_transform(urbana2,crs=4326)##Converting coordinates from NAD83 to WGS84

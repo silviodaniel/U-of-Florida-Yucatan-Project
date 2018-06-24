@@ -18,6 +18,7 @@ urbana2 <- urbana2[-c(43,61,102,153,242,295),]
 rural<-st_read(paste0(rootdir1,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
 rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
 rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
+rural <- rural[-c(277:299,301:329),]#fixing the Progreso issue with including shapes from islands
 municipios<- read.csv("catalogo de municipios_mod.csv",header=T,stringsAsFactors = F)#;View(municipios)
 municipios$Nombre.del.Municipio <- toupper(municipios$Nombre.del.Municipio)
 #####
@@ -25,12 +26,13 @@ municipios$Nombre.del.Municipio <- toupper(municipios$Nombre.del.Municipio)
 municipios2 <- municipios
 colnames(municipios2)[3] <- c("CVE_MUN")
 rural<- left_join(rural,municipios2[3:4])
-#View(rural)
 
 addresses2_hits <- addresses2_hits[order(addresses2_hits[,5]),] ; View(addresses2_hits)
 ageb <- c()
 mun <- subset(addresses2_hits,(grepl("municipality matches!",addresses2_hits$LAT_HITS)))
-mun<- mun$MUNICIPIO
+mun<- mun$MUNICIPIO#this is the municipality vector matching up with addresses from schools, 
+#so 543 municipio coordinates needed
+
 for (i in mun) {#randomly creating various AGEB's to add to df
   tmp <- rural$CVE_AGEB[rural$Nombre.del.Municipio == i]#whichever ageb's equal that iteration name
   tmp1 <- sample(tmp, size = 1)#sample 1 from those ageb's
@@ -65,7 +67,7 @@ for (i in seq(placeholder$Nombre.del.Municipio)){
     if (n >= target) mun.coord.vector <- append(mun.coord.vector,rand.coords[1])#append each time
   }
 }
-mun.coords <- st_coordinates(mun.coord.vector[1:length(placeholder$Nombre.del.Municipio)]);View(mun.coords)
+mun.coords <- st_coordinates(mun.coord.vector[1:length(placeholder$Nombre.del.Municipio)])#;View(mun.coords)
 mun.coords <- as.data.frame(mun.coords)
 placeholder$mun.coords <- mun.coords[1:length(placeholder$Nombre.del.Municipio),]
 # placeholder$mun.coords <- NULL
@@ -119,7 +121,7 @@ addresses2_hits$LNG_HITS[1] <- -89.66059559999999
 
 schools2_x <- as.numeric(addresses2_hits$LAT_HITS)
 schools2_y <- as.numeric(addresses2_hits$LNG_HITS)
-# write.table(addresses2_hits,"addresses.txt",sep="\t",row.names = F)
+write.table(addresses2_hits,"addresses_updated.txt",sep="\t",row.names = F)
 ###NOTES
 
 ##Example 

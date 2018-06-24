@@ -19,15 +19,15 @@ setwd(paste0(rootdir,"U-of-Florida-Yucatan-Project"))
 #reading files necessary
 ###############################################
 #####Py old data##############
-# py<- read.table("Linux Data/pop-yucatan/population-yucatan.txt",header = T)
-# ly<-read.table("Linux Data/pop-yucatan/locations-yucatan.txt",header=T)
-# ly$hid=ly$id
-# ly$workid=ly$id
-# py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
-# py=left_join(py,ly[,c("workid","x","y")],by="workid")
-# colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
-# students=py[py$age>4 & py$age<18,]
-# schools = ly[ly$type=='school',]
+py<- read.table("Linux Data/pop-yucatan/population-yucatan.txt",header = T)
+ly<-read.table("Linux Data/pop-yucatan/locations-yucatan.txt",header=T)
+ly$hid=ly$id
+ly$workid=ly$id
+py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
+py=left_join(py,ly[,c("workid","x","y")],by="workid")
+colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
+students=py[py$age>4 & py$age<18,]
+schools = ly[ly$type=='school',]
 ################################################
 #########Py new data########################
 py<- read.table("Linux Data/pop-yucatan/population-yucatan-silvio.txt",header = T)
@@ -57,6 +57,7 @@ urbana2 <- urbana2[-c(43,61,102,153,242,295),]
 rural<-st_read(paste0(rootdir,mapdir1,"yuc_ageb_rural.shp"),quiet=T,stringsAsFactors = F)#Encuesta intercensal
 rural$CVE_MUN <- as.numeric(rural$CVE_MUN)
 rural$CVE_ENT <- as.numeric(rural$CVE_ENT)
+# rural <- rural[-c(277:299,301:329),]#fixing the Progreso issue with including shapes from islands
 
 # length(unique(urbana$CVE_LOC))#only 20 unique localities
 # View(encuesta)
@@ -81,20 +82,26 @@ mex1=st_read(paste0(rootdir,mapdir1,"MEX_adm1.shp"),
 #Map 1: This is set to run for the schools2_y and schools2_x files 
 #from other pieces of code, which is the  geolocated new data set of schools 
 #(run geloc and geloc2 first)
-png("Pictures/newshps_newschools_green_enlarged_schools2.png", width=2400, height=1600, res=240)
+# png("Pictures/outliers2.png", width=2400, height=1600, res=240)
 par(mar=c(2.1,2.1,2.1,2.1))#margins
 plot(st_geometry(mex0))#plots all of Mexico
-plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
+plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,22.75),bg="lightblue",
      col="gray")#takes all Mexico plot, plot just Yucatan
 # plot(st_geometry(mex2),add=T,col="#99FF99")
 # plot(st_geometry(mex2.1),add=T,col="#99FF99")
 plot(st_geometry(rural),add=T,col="#99FF99")
 plot(st_geometry(urbana2),add=T,col="white")
+points(outliers2$x1,outliers2$y1,pch=20,col='red',lwd=2)
+points(outliers2$x2,outliers2$y2,pch=20,col='yellow',lwd=2)
+points(schools$x,schools$y,pch= 20, col='blue',lwd=2)#schools enlarged (pch=20)
+points(schools$x,schools$y,pch= '.', col='blue',lwd=0.5)#schools enlarged (pch=20)
+
+
+dev.off()
 
 points(students$x1,students$y1,pch='.',col='red')
 #
 points(schools$x,schools$y,pch='.',col='blue')
-points(schools$x,schools$y,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
 points(schools2_y,schools2_x,pch= 20, col='blue',lwd=0.5)#schools enlarged (pch=20)
 dev.off()
 #are rural and urbana municipalities of different codes??
@@ -149,24 +156,24 @@ plotCircle_blue <- function(x_deg, y_deg, r) {
   westlons = x - 2*asin(sqrt((hav(r/earth_r) - hav(halflats - y))/(cos(y)*cos(halflats))))
   lats = c(halflats, rev(halflats))
   lons = c(westlons, rev(eastlons))
-  lines(rad2deg(lons), rad2deg(lats),col="blue")
+  lines(rad2deg(lons), rad2deg(lats),col="blue")}
     #angles <- seq(0,2*pi,length.out=360)#between 0 and 2pi
   #lines(r*cos(angles)+x,r*sin(angles)+y)#start at x and y and add
-}#This output is Cartesian not lat long, so have to fix this
+#}#This output is Cartesian not lat long, so have to fix this
 #must get lines to output the coordinates of x and y in lat/long degrees
 
-# png("Pictures/catchment_oldshps_rad10_2.png", width=2400, height=1600, res=240)
+png("Pictures/catchment_oldshps_rad10_new.png", width=2400, height=1600, res=240)
 par(mar=c(2.1,2.1,2.1,2.1))#margins
 plot(st_geometry(mex0))#plots all of Mexico
 plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
      col="gray")#takes all Mexico plot, plot just Yucatan
 plot(st_geometry(mex1[31,]),add=T,col="#99FF99")#adds green color to 
-
-axis(1)#adds in long and lat axes
-axis(2)
-grid()
-abline(h=seq(19,22,0.1))
-abline(v=seq(-91,-87,0.1))
+# 
+# axis(1)#adds in long and lat axes
+# axis(2)
+# grid()
+# abline(h=seq(19,22,0.1))
+# abline(v=seq(-91,-87,0.1))
 
 #Just add below code to above plot of Yuc (empty green area, mex0 and mex1)
 #####py data#####
@@ -267,6 +274,7 @@ plotCircle_blue(-90.26,21,10)
 plotCircle_blue(-88.9,21,10)
 plotCircle_blue(-89.96,20.4,10)
 plotCircle_blue(-88.02,21.425,10)
+
 dev.off()
 
 plotCircle_blue()
