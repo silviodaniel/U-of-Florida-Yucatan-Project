@@ -41,42 +41,45 @@ start = Sys.time()
 hav_vec=hav(py[,8],py[,9],py[,10],py[,11])##ANOTHER FAST WAY TO CALCULATE
 py$distance=hav_vec
 print(Sys.time()-start)
-#head(py)
-  
-#Setting up histogram
-hist(py[1:1819497,12], xlab="Daily Distance Traveled (km)", main="Population Distribution of Daily Travel in Yucatan")
-# py$logdist=py$distance#adds new column called logdist set equal to distance
-# py$logdist[which(py$logdist==0)]=5/1000##Changing the zeroes in the data to 5/1000 because cant take log(0)
-# py$logdist=log10(py$logdist)#Taking log of the data for logdist
-# ##py$distance=apply_dists# adds the haversine function to the distance column in population
-people_mat = py[,c('pid','workid','distance')]##shortening the py matrix to 3 columns
-# head(people_mat)
-# people_log = py[,c('pid','workid','logdist')]##shortening the py matrix to 3 columns
-# tail(people_log)
-# head(py)
-# head(ly)
 
-# tail(ly)
+#Setting up histogram
+
+people_mat = py[,c('pid','workid','distance')]##shortening the py matrix to 3 columns
+
 loc_labels = ly[,c('id','type')]##**shortening the matrix of locations to these 2 columns
 names(loc_labels)[1] = 'workid' #names the column workid
 movement_by_type = merge(people_mat, loc_labels)#**merging the shortened py and ly with "workid" , organized by number in dataset
 #movement by type has houses, schools, work, organized by work id and pid; histogram the distances separete as types (school or work)
 # movement_by_log = merge(people_log, loc_labels)
-# head(movement_by_type)
-# head(movement_by_log)
-# tail(movement_by_type)
-#View(movement_by_type)
 
 #??in merge, are we merging people_mt and loc_labels with "workid" and organizing the distances by their workid?
 table(movement_by_type$distance[movement_by_type$type=='house'])#gives number of people working from home (distance 0)
 #which is 620859
 
 #WORK HISTOGRAM 
-hist(movement_by_type$distance[movement_by_type$type=='work'],xlab="Distance Traveled (km)", main="Average Daily Work Transit in Yucatan")
+# png("Hist_DailyWork3.png",width=2400,height=1500,res=240)
+par(mar=c(5,5,4,1))
+hist(movement_by_type$distance[movement_by_type$type=='work'],ylab="Worker count (thousands)",
+     xlab="Distance (km)", main="Daily Work Transit (Model)",
+     xaxt='n',yaxt='n',cex.main=2,cex.lab=1.5)
+axis(side=1,seq(0,150,15),labels = seq(0,150,15))
+axis(side=2,seq(0,400000,100000),labels=seq(0,400,100))
+dev.off()
+
+# hist(movement_by_type$distance[movement_by_type$type=='work'],xlab="Distance Traveled (km)", main="Average Daily Work Transit in Yucatan")
 
 ######SCHOOL HISTOGRAM
 students=py[py$age>4 & py$age<18,]
 schools = ly[ly$type=='school',]
+# png("New_schools_hist.png",width=2400, height=1500, res=240)
+par(mar=c(5,5,4,1))
+hist(students$distance,ylab="Student count (thousands)",
+     xlab="Distance (km)", main="Daily School Transit (Model)",
+     cex.main=2,cex.lab=1.5,
+     xaxt='n',yaxt='n')
+axis(side=1,seq(0,150,15),labels = seq(0,150,15))
+axis(side=2,seq(0,400000,100000),labels=seq(0,400,100))
+dev.off()
 
 png("Pictures/new_schools_hist.png")
 hist(students$distance,xlab="Distance Traveled (km)",
@@ -176,3 +179,8 @@ length(outliers2$pid)/length(students$pid)#4733 outliers
 # #where houses end in location : position 376400
 # 
 # length(students)
+# hist(py[1:1819497,12], xlab="Daily Distance Traveled (km)", main="Population Distribution of Daily Travel in Yucatan")
+# py$logdist=py$distance#adds new column called logdist set equal to distance
+# py$logdist[which(py$logdist==0)]=5/1000##Changing the zeroes in the data to 5/1000 because cant take log(0)
+# py$logdist=log10(py$logdist)#Taking log of the data for logdist
+# ##py$distance=apply_dists# adds the haversine function to the distance column in population
