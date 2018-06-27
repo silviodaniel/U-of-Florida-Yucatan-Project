@@ -94,10 +94,11 @@ median(students$distance)
 # mean(movement_by_type$distance[movement_by_type$type=='house'])
 # mean(movement_by_type$distance[movement_by_type$type=='school'])#
 # max(movement_by_type$distance[movement_by_type$type=='school'])#'
-
 #reproduced old mean of 45.7km
 #7.88 km old data, normal pi value
-#1.13 km new data
+#1.13 km new data (mean)
+#.705km old data (median)
+#0.411 NEW DATA (median)
 
 mean(movement_by_type$distance[movement_by_type$type=='work'])#
 #reproduced old mean of 34.4 km
@@ -108,16 +109,15 @@ mean(movement_by_type$distance[movement_by_type$type=='work'])#
 median(movement_by_type$distance[movement_by_type$type=='school'])#
 #reproduced old median of 46.0km
 #.705km old data
-#0.682 NEW DATA
+#0.411 NEW DATA
 median(movement_by_type$distance[movement_by_type$type=='work'])#
 max(movement_by_type$distance[movement_by_type$type=='work'])#
-
 #Reproduced old median of 11.06km
 #2.78 km old data
 #2.74 km new data
 
-outliers= students[c(407612,408036,408340,408518),]#students >250 km
-length(which(students$distance>50))
+# outliers= students[c(407612,408036,408340,408518),]#students >250 km
+# length(which(students$distance>50))
 outliers2= subset(students,students$distance>20);View(outliers2)
 length(outliers2$pid)/length(students$pid)#4733 outliers
 
