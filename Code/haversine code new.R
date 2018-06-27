@@ -74,15 +74,26 @@ table(movement_by_type$distance[movement_by_type$type=='house'])#gives number of
 #WORK HISTOGRAM 
 hist(movement_by_type$distance[movement_by_type$type=='work'],xlab="Distance Traveled (km)", main="Average Daily Work Transit in Yucatan")
 
-#SCHOOL HISTOGRAM
-hist(movement_by_type$distance[movement_by_type$type=='school'],xlab="Distance Traveled (km)",
+######SCHOOL HISTOGRAM
+students=py[py$age>4 & py$age<18,]
+schools = ly[ly$type=='school',]
+
+png("Pictures/new_schools_hist.png")
+hist(students$distance,xlab="Distance Traveled (km)",
      ylab="Student count (thousands)",
      main="Average Daily School Transit in Yucatan")
+dev.off()
+# hist(movement_by_type$distance[movement_by_type$type=='school'],xlab="Distance Traveled (km)",
+#      ylab="Student count (thousands)",
+#      main="Average Daily School Transit in Yucatan")
 
-#Means
-mean(movement_by_type$distance[movement_by_type$type=='house'])
-mean(movement_by_type$distance[movement_by_type$type=='school'])#
-max(movement_by_type$distance[movement_by_type$type=='school'])#
+#####Students mean, median, max
+mean(students$distance)#mean distance traveled is 1.50
+max(students$distance)
+median(students$distance)
+# mean(movement_by_type$distance[movement_by_type$type=='house'])
+# mean(movement_by_type$distance[movement_by_type$type=='school'])#
+# max(movement_by_type$distance[movement_by_type$type=='school'])#'
 
 #reproduced old mean of 45.7km
 #7.88 km old data, normal pi value
@@ -104,12 +115,11 @@ max(movement_by_type$distance[movement_by_type$type=='work'])#
 #Reproduced old median of 11.06km
 #2.78 km old data
 #2.74 km new data
-students=py[py$age>4 & py$age<18,]
-schools = ly[ly$type=='school',]
+
 outliers= students[c(407612,408036,408340,408518),]#students >250 km
 length(which(students$distance>50))
-outliers2= subset(students,students$distance>50);View(outliers2)
-length(students$pid)
+outliers2= subset(students,students$distance>20);View(outliers2)
+length(outliers2$pid)/length(students$pid)#4733 outliers
 
 # hist(movement_by_log$logdist[movement_by_log$type=='school'],
 #      xlab="Distance Traveled (log(km))", 

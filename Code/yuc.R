@@ -82,20 +82,21 @@ mex1=st_read(paste0(rootdir,mapdir1,"MEX_adm1.shp"),
 #Map 1: This is set to run for the schools2_y and schools2_x files 
 #from other pieces of code, which is the  geolocated new data set of schools 
 #(run geloc and geloc2 first)
-# png("Pictures/outliers2.png", width=2400, height=1600, res=240)
+png("Pictures/less_outliers.png", width=2400, height=1600, res=240)
 par(mar=c(2.1,2.1,2.1,2.1))#margins
 plot(st_geometry(mex0))#plots all of Mexico
-plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,22.75),bg="lightblue",
+plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,21.75),bg="lightblue",
      col="gray")#takes all Mexico plot, plot just Yucatan
+# plot(st_geometry(mex0),xlim=c(-90.75,-87.25),ylim=c(19.5,22.75),bg="lightblue",
+#      col="gray")#takes all Mexico plot, plot just Yucatan
 # plot(st_geometry(mex2),add=T,col="#99FF99")
 # plot(st_geometry(mex2.1),add=T,col="#99FF99")
 plot(st_geometry(rural),add=T,col="#99FF99")
 plot(st_geometry(urbana2),add=T,col="white")
 points(outliers2$x1,outliers2$y1,pch=20,col='red',lwd=2)
-points(outliers2$x2,outliers2$y2,pch=20,col='yellow',lwd=2)
 points(schools$x,schools$y,pch= 20, col='blue',lwd=2)#schools enlarged (pch=20)
-points(schools$x,schools$y,pch= '.', col='blue',lwd=0.5)#schools enlarged (pch=20)
-
+points(outliers2$x2,outliers2$y2,pch=20,col='purple',lwd=2)
+# points(schools$x,schools$y,pch= '.', col='blue',lwd=0.5)#schools enlarged (pch=20)
 
 dev.off()
 
