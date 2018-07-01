@@ -5,17 +5,24 @@ setwd(paste0(rootdir,"Linux Data/pop-yucatan/"))
 library(cluster)
 # install.packages("dplyr")
 library(dplyr)
-#py<-read.table(file="C:/Users/Silvio/Documents/R/Yucatan-Project/pop-yucatan/population-yucatan.txt",header=TRUE)
+# py<-read.table(file="C:/Users/Silvio/Documents/R/Yucatan-Project/pop-yucatan/population-yucatan.txt",header=TRUE)
 # py=read.table(file="pop-yucatan/population-yucatan_old.txt",header = T)
-# py<- read.table(file="population-yucatan.txt",header = T)
-# ly<-read.table(file="locations-yucatan.txt",header=TRUE)
-py<- read.table("population-yucatan-silvio.txt",header = T)
-ly<-read.table("locations-yucatan-silvio.txt",header=T)
+py<- read.table(file="population-yucatan.txt",header = T)
+ly<-read.table(file="locations-yucatan.txt",header=TRUE)
+# py<- read.table("population-yucatan-silvio.txt",header = T)
+# ly<-read.table("locations-yucatan-silvio.txt",header=T)
 ly$hid=ly$id
 ly$workid=ly$id
 py=left_join(py,ly[,c("hid","x","y")],by="hid")#adding 2 columns in py (after workid) with house x y coordinates
 py=left_join(py,ly[,c("workid","x","y")],by="workid")
 colnames(py)<-c("pid","hid","age","sex","hh_serial","pernum","workid","x1","y1","x2","y2")
+students_new <- read.table("student_ids-distance_traveled.txt",
+                           header=F);View(students_new)
+colnames(students_new)<- c("pid","distance")
+#students_new are the distances traveled by all students; first 
+#columns is their pid and second is their distance
+#students_new includes all those above age of 5 who do not work
+# or work from home
 #x1 and y1 refer to the home coordinates, and x2 y2 refer to the work or school
 # py1<-py
 head(py)
@@ -56,8 +63,9 @@ movement_by_type = merge(people_mat, loc_labels)#**merging the shortened py and 
 table(movement_by_type$distance[movement_by_type$type=='house'])#gives number of people working from home (distance 0)
 #which is 620859
 
-#WORK HISTOGRAM 
-# png("Hist_DailyWork3.png",width=2400,height=1500,res=240)
+####WORK HISTOGRAM 
+setwd(rootdir)
+png("Pictures/New_hist_work.png",width=2400,height=1500,res=240)
 par(mar=c(5,5,4,1))
 hist(movement_by_type$distance[movement_by_type$type=='work'],ylab="Worker count (thousands)",
      xlab="Distance (km)", main="Daily Work Transit (Model)",
@@ -69,9 +77,18 @@ dev.off()
 # hist(movement_by_type$distance[movement_by_type$type=='work'],xlab="Distance Traveled (km)", main="Average Daily Work Transit in Yucatan")
 
 ######SCHOOL HISTOGRAM
+png("Pictures/New_schools_hist2.png",width=2400, height=1500, res=240)
+par(mar=c(5,5,2,1))
+hist(students_new$distance,ylab="Student count (thousands)",
+     xlab="Distance (km)", main="Daily School Transit (Model)",
+     cex.main=2,cex.lab=1.5,
+     xaxt='n',yaxt='n')
+axis(side=1,seq(0,18,3),labels = seq(0,18,3))
+axis(side=2,seq(0,400000,100000),labels=seq(0,400,100))
+dev.off()
+
 students=py[py$age>4 & py$age<18,]
 schools = ly[ly$type=='school',]
-# png("New_schools_hist.png",width=2400, height=1500, res=240)
 par(mar=c(5,5,4,1))
 hist(students$distance,ylab="Student count (thousands)",
      xlab="Distance (km)", main="Daily School Transit (Model)",
@@ -91,9 +108,16 @@ dev.off()
 #      main="Average Daily School Transit in Yucatan")
 
 #####Students mean, median, max
-mean(students$distance)#mean distance traveled is 1.50
-max(students$distance)
-median(students$distance)
+# mean(students$distance)#mean distance traveled is 1.50
+# max(students$distance)
+# median(students$distance)
+mean(students_new$distance)
+median(students_new$distance)
+max(students_new$distance)
+#mean is 0.733
+#median is 0.401
+#max is 16.7
+
 # mean(movement_by_type$distance[movement_by_type$type=='house'])
 # mean(movement_by_type$distance[movement_by_type$type=='school'])#
 # max(movement_by_type$distance[movement_by_type$type=='school'])#'
@@ -102,10 +126,11 @@ median(students$distance)
 #1.13 km new data (mean)
 #.705km old data (median)
 #0.411 NEW DATA (median)
+#old data max is 172.2 for schools 
 
 mean(movement_by_type$distance[movement_by_type$type=='work'])#
 #reproduced old mean of 34.4 km
-#13.9 km old data
+#13.87 km old data
 #13.86 new data
 # table(movement_by_type$distance[movement_by_type$type=='house'])
 # table(movement_by_type$distance[movement_by_type$type=='work'])
@@ -115,6 +140,7 @@ median(movement_by_type$distance[movement_by_type$type=='school'])#
 #0.411 NEW DATA
 median(movement_by_type$distance[movement_by_type$type=='work'])#
 max(movement_by_type$distance[movement_by_type$type=='work'])#
+#old data max is 180.7 or 181 km
 #Reproduced old median of 11.06km
 #2.78 km old data
 #2.74 km new data
